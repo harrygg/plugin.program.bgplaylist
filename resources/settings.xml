@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <!-- General -->
+    <category label="Настройки">
+      <setting label="Път до оригиналната m3u плейлиста" type="text"  id="m3u_url" default="" />
+      <setting label="Път до mapping файл" type="text"  id="mapping_file" default="" />
+      <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
+      <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
+      <setting type="sep"/>
+      <setting label="Запази плейлистата в друга директория" type="bool"   id="copy_playlist" default="false"/>
+      <setting label="Път до директорията" type="folder" id="copy_to_folder" default="" option="writeable" visible="eq(-1,true)"/>
+      <setting type="sep"/>
+      <setting label="Разширен журнал (Дебъг)" type="bool"   id="debug" default="false"/>
+    </category>
+</settings>
