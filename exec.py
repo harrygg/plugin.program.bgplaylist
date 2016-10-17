@@ -1,186 +1,142 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
-import xbmc
-import xbmcaddon
-import xbmcgui
-import xbmcplugin
-import xbmcvfs
-import re
-import simplejson as json
-import urllib
+import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
 from ga import ga
 
-__addon__ = xbmcaddon.Addon()
-__author__ = __addon__.getAddonInfo('author')
-__scriptid__ = __addon__.getAddonInfo('id')
-__scriptname__ = __addon__.getAddonInfo('name')
-__version__ = __addon__.getAddonInfo('version')
-__icon__ = __addon__.getAddonInfo('icon').decode('utf-8')
-__language__ = __addon__.getLocalizedString
-__cwd__ = xbmc.translatePath( __addon__.getAddonInfo('path') ).decode('utf-8')
-__profile__ = xbmc.translatePath( __addon__.getAddonInfo('profile') ).decode('utf-8')
-__resource__ = xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' ) ).decode('utf-8')
-__icon_msg__ = xbmc.translatePath( os.path.join( __cwd__, 'resources', 'bulsat.png' ) ).decode('utf-8')
-__data__ = xbmc.translatePath(os.path.join( __profile__, '', 'dat') ).decode('utf-8')
-__r_path__ = xbmc.translatePath(__addon__.getSetting('w_path')).decode('utf-8')
-sys.path.insert(0, __resource__)
+__DEBUG__ = False
 
-dp = xbmcgui.DialogProgressBG()
-dp.create(heading = __scriptname__)
+def log(msg, level = xbmc.LOGNOTICE):
+  if c_debug or level == 4:
+    xbmc.log('%s | %s' % (id, msg), level)
 
-def progress_cb (a):
-  _str = __scriptname__
-  if a.has_key('idx') and a.has_key('max'):
-    _str += ' %s of %d' % (a['idx'], a['max'])
-  dp.update(a['pr'], _str  , a['str'])
+def show_progress(percent, msg):
+  if c_debug or is_manual_run:
+    heading = name.encode('utf-8') + ' ' + str(percent) + '%'
+    dp.update(percent, heading, str(msg))
+    log(msg)
 
-def Notify (msg1, msg2):
-  xbmc.executebuiltin((u'Notification(%s,%s,%s,%s)' % (msg1, msg2, '5000', __icon_msg__)).encode('utf-8'))
+def close_progress():
+  if c_debug or is_manual_run:
+    dp.close()
 
-def check_plg():
-  js_resp = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.GetAddons", "id":1}')
-  if int(xbmc.getInfoLabel("System.BuildVersion" )[0:2]) > 14: ln = 1
-  else: ln = 2
+def update(action, location, crash=None):
+	p = {}
+	p['an'] = addon.getAddonInfo('name')
+	p['av'] = addon.getAddonInfo('version')
+	p['ec'] = 'Addon actions'
+	p['ea'] = action
+	p['ev'] = '1'
+	p['ul'] = xbmc.getLanguage()
+	p['cd'] = location
+	ga('UA-79422131-10').update(p, crash)
+  
+###################################################
+### Settings
+###################################################
+is_manual_run = False if len(sys.argv) > 1 and sys.argv[1] == 'False' else True
+if not is_manual_run:
+  xbmc.log('%s | Автоматично генериране на плейлиста' % id)
+addon = xbmcaddon.Addon()
+id = addon.getAddonInfo('id')
+name = addon.getAddonInfo('name').decode('utf-8')
+profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
+cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
+c_debug = True if addon.getSetting('debug') == 'true' else False
+s = requests.Session()
+url = addon.getSetting('m3u_url')
+r = None
+channels = {}
+pl_name = 'bgpl.m3u'
 
-  if len(re.findall(r'bscf', js_resp)) > ln:
-    Notify ('%s %s' % (__scriptname__, __version__) , '[COLOR FFFF0000]confilct ![/COLOR]')
-    return False
-  else:
-    return True
-
-def update(name, dat, crash=None):
-  payload = {}
-  payload['an'] = __scriptname__
-  payload['av'] = __version__
-  payload['ec'] = name
-  payload['ea'] = 'tv_service'
-  payload['ev'] = '1'
-  payload['dl'] = urllib.quote_plus(dat.encode('utf-8'))
-  ga().update(payload, crash)
-
-__ua_os = {
-  '0' : {'ua' : 'pcweb', 'osid' : 'pcweb'},
-  '1' : {'ua' : 'samsunghas-agent/1.1', 'osid' : 'samsungtv'},
-  '2' : {'ua' : 'HLS Client/2.0 (compatible; LG NetCast.TV-2012)', 'osid' : 'lgtv'},
-  '3' : {'ua' : 'Mozilla/5.0 (FreeBSD; Viera; rv:34.0) Gecko/20100101 Firefox/34.0', 'osid' : 'panasonictv'},
-  '4' : {'ua' : 'stagefright', 'osid' : 'androidtv'},
-}
-
-if os.path.exists(os.path.join(__data__, '', 'data.dat')):
-  with open(os.path.join(__data__, '', 'data.dat'), 'r') as f:
-    js = json.load(f)
-  if not (js.has_key('app_version') and js['app_version'] == __version__):
-    u = __addon__.getSetting('username')
-    p = __addon__.getSetting('password')
-
-    for root, dirs, files in os.walk(__data__, topdown=False):
-      for name in files:
-        os.remove(os.path.join(root, name))
-      for name in dirs:
-        os.rmdir(os.path.join(root, name))
-    __addon__.setSetting('firstrun', 'true')
-
-if __addon__.getSetting('firstrun') == 'true':
-  Notify('Settings', 'empty')
-  __addon__.openSettings()
-  __addon__.setSetting('firstrun', 'false')
-
-if __addon__.getSetting('dbg') == 'true':
-  dbg = True
-else:
-  dbg = False
-
-if __addon__.getSetting('xxx') == 'true':
-  xxx = True
-else:
-  xxx = False
-
-if __addon__.getSetting('en_group_ch') == 'true':
-  _group_name = False
-else:
-  _group_name = __scriptid__
-
-if __addon__.getSetting('ext_epg') == 'true':
-  etx_epg = True
-  map_url = __addon__.getSetting('map_dat')
-else:
-  etx_epg = False
-  map_url = None
-
-if not __addon__.getSetting('username'):
-  Notify('User', 'empty')
-if not __addon__.getSetting('password'):
-  Notify('Password', 'empty')
-
-def dbg_msg(msg):
-  if dbg:
-    print'### %s: %s' % (__scriptid__, msg)
-
-import traceback
+###################################################
+### Addon logic
+###################################################
 try:
-  import bsc
-  b = bsc.dodat(base = __addon__.getSetting('base'),
-                login = {'usr': __addon__.getSetting('username'),
-                        'pass': __addon__.getSetting('password')
-                        },
-                path = __data__,
-                cachetime = float(__addon__.getSetting('refresh')),
-                dbg = dbg,
-                timeout=float(__addon__.getSetting('timeout')),
-                ver = __version__,
-                xxx = xxx,
-                os_id = __ua_os[__addon__.getSetting('dev_id')]['osid'],
-                agent_id = __ua_os[__addon__.getSetting('dev_id')]['ua'],
-                app_ver = __addon__.getSetting('app_ver'),
-                force_group_name = _group_name,
-                gen_m3u = True,
-                gen_epg = not etx_epg,
-                compress = True,
-                map_url = map_url,
-                proc_cb = progress_cb)
+  if c_debug or is_manual_run:
+    dp = xbmcgui.DialogProgressBG()
+    dp.create(heading = name)
 
-  if check_plg():
-    force = True
-    if len(sys.argv) > 1 and sys.argv[1] == 'False':
-      force = False
-      dbg_msg('Reload timer')
-      update('reload_timer',  __addon__.getSetting('check_interval'))
-      xbmc.executebuiltin('AlarmClock (%s, RunScript(plugin.program.bscfusion, False), %s, silent)' % (__scriptid__, __addon__.getSetting('check_interval')))
+  ###################################################
+  ### Parsing playlist
+  ###################################################
+  show_progress(1, 'Сваляне на плейлиста от %s ' % url)
+  update('operation', 'regeneration')
+  r = s.get(url)
+  lines = r.text.splitlines()
 
-    if b.gen_all(force):
-      if __addon__.getSetting('en_cp') == 'true' and __addon__.getSetting('w_path') != '' and xbmcvfs.exists(__r_path__):
-        if os.path.isfile(os.path.join(__data__, '', 'bulsat.xml.gz')):
-          xbmcvfs.copy(os.path.join(__data__, '', 'bulsat.xml.gz'), os.path.join(__r_path__, '', 'bulsat.xml.gz'))
-        if os.path.isfile(os.path.join(__data__, '', 'bulsat.m3u')):
-          xbmcvfs.copy(os.path.join(__data__, '', 'bulsat.m3u'), os.path.join(__r_path__, '', 'bulsat.m3u'))
-        dbg_msg('Copy Files')
+  progress = 5
+  n_lines = len(lines)
+  step = n_lines / 50
 
-      if __addon__.getSetting('en_custom_cmd') == 'true':
-        __builtin = __addon__.getSetting('builtin_cmd')
-        __script = __addon__.getSetting('script_cmd')
+  for i in range(0, n_lines):
+    if lines[i].startswith("#EXTINF"):
+      name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
+      log("Extracted channel name: %s" % name.encode('utf-8'))
+      i += 1
+      channels[name] = lines[i]
+      if i % step == 0:
+        progress += 1
+        show_progress(progress,'Извличане на канали от плейлиста')
 
-        if __builtin != '':
-          dbg_msg ('builtin exec %s' % __builtin)
-          update('builtin_exec %s' % __builtin, __ua_os[__addon__.getSetting('dev_id')]['osid'])
-          xbmc.executebuiltin('%s' % __builtin)
+  show_progress(progress + 1,'Извлечени %s канала' % len(channels))
 
-        if __script != '':
-          dbg_msg ('script exec %s' % __script)
-          update('script_exec %s' % __script, __ua_os[__addon__.getSetting('dev_id')]['osid'])
-          os.system(__script)
+  ###################################################
+  ### Parsing mapping file, writing playlist
+  ###################################################
+  mapping_file = addon.getSetting('mapping_file')
+  if not os.path.isfile(mapping_file):
+    mapping_file = os.path.join(cwd, 'resources', 'mapping.txt')
+    
+  log('mapping_file: %s' % mapping_file)
+  n = 0
+  new_m3u = os.path.join(profile_dir, pl_name)
+  log('Playlist path: %s' % new_m3u)
 
-      if __addon__.getSetting('en_reload_pvr')== 'true':
-        dbg_msg('Reload PVR')
-        update('reload_pvr', __ua_os[__addon__.getSetting('dev_id')]['osid'])
-        xbmc.executebuiltin('XBMC.StopPVRManager')
-        xbmc.sleep(3000)
-        xbmc.executebuiltin('XBMC.StartPVRManager')
-
-except Exception, e:
-  Notify('Module Import', 'Fail')
-  traceback.print_exc()
-  update('exception', str(e.args[0]), sys.exc_info())
-  pass
-
-dp.close()
+  with open(mapping_file) as f, open(new_m3u, 'w') as w:
+    w.write('#EXTM3U\n')
+    lines = f.readlines()
+    for l in lines:
+      if not (l.startswith('\t') or l.startswith(' ') or l.startswith('#') or l.startswith('\r') or l.startswith('\n')): 
+        s = l.strip('\n').split(',')
+        log("Adding channel: " + s[0])
+        line = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n' % (s[1],s[2],s[3],s[0])
+        w.write(line)
+        url = channels[s[0].decode('utf-8')]
+        w.write(url + "\n")
+        n += 1
+        
+  show_progress(95,'%s канала бяха пренаредени' % n)
+  show_progress(97,'Плейлиста беше успешно записана')
+  
+  ###################################################
+  ### Copy playlist to additional folder if specified
+  ###################################################
+  try:
+    ctf = addon.getSetting('copy_to_folder')
+    if addon.getSetting('copy_playlist') == 'true' and os.path.isdir(ctf):
+      log('Copying playlist to: %s' % ctf)
+      xbmcvfs.copy(new_m3u, os.path.join(ctf, pl_name))
+      show_progress(98, 'Плейлиста беше успешно копирана')
+  except Exception, er:
+    log(er, 4)
+    xbmc.executebuiltin('Notification(%s,%s,%s,%s)' % ("Error!", str(er), '10000', ''))
+    
+  ####################################################
+  ### Set next run
+  ####################################################
+  #show_progress(98,'Генерирането на плейлистата завърши!')
+  roi = int(addon.getSetting('run_on_interval')) * 60
+  show_progress(99,'Настройване на AlarmClock. Следващото изпълнение на скрипта ще бъде след %s часа' % (roi / 60))
+  xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (id, id, roi))
+   
+  ####################################################
+  ###Restart PVR Sertice to reload channels' streams
+  ####################################################
+  if addon.getSetting('reload_pvr') == 'true':
+    xbmc.executebuiltin('XBMC.StopPVRManager')
+    xbmc.executebuiltin('XBMC.StartPVRManager')
+  
+  close_progress()
+except Exception, er:
+  log(er, 4)
+  close_progress()
+  xbmc.executebuiltin('Notification(%s,%s,%s,%s)' % ("Error!", str(er), '10000', ''))
