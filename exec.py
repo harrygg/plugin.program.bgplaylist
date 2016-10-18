@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
-from ga import ga
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == 4:
@@ -17,15 +16,19 @@ def close_progress():
     dp.close()
 
 def update(action, location, crash=None):
-  p = {}
-  p['an'] = addon.getAddonInfo('name')
-  p['av'] = addon.getAddonInfo('version')
-  p['ec'] = 'Addon actions'
-  p['ea'] = action
-  p['ev'] = '1'
-  p['ul'] = xbmc.getLanguage()
-  p['cd'] = location
-  ga('UA-79422131-10').update(p, crash)
+  try:
+    from ga import ga
+    p = {}
+    p['an'] = addon.getAddonInfo('name')
+    p['av'] = addon.getAddonInfo('version')
+    p['ec'] = 'Addon actions'
+    p['ea'] = action
+    p['ev'] = '1'
+    p['ul'] = xbmc.getLanguage()
+    p['cd'] = location
+    ga('UA-79422131-10').update(p, crash)
+  except Exception, er:
+    log(er)
   
 ###################################################
 ### Settings
@@ -45,16 +48,19 @@ r = None
 channels = {}
 pl_name = 'bgpl.m3u'
 
+if addon.getSetting('firstrun') == 'true':
+  addon.setSetting('firstrun', 'false')
+  addon.openSettings()
+  
 ###################################################
 ### Addon logic
 ###################################################
-
 if c_debug or is_manual_run:
   dp = xbmcgui.DialogProgressBG()
   dp.create(heading = name)
 
 ###################################################
-### Parsing playlist
+### Get playlist from server and parse it
 ###################################################
 show_progress(1, 'Сваляне на плейлиста от %s ' % url)
 update('operation', 'regeneration')
@@ -80,16 +86,18 @@ show_progress(progress + 1,'Извлечени %s канала' % len(channels))
 ###################################################
 ### Parsing mapping file, writing playlist
 ###################################################
-mapping_file = addon.getSetting('mapping_file')
-if not os.path.isfile(mapping_file):
-  mapping_file = os.path.join(cwd, 'resources', 'mapping.txt')
-  
-log('mapping_file: %s' % mapping_file)
-n = 0
+mp = addon.getSetting('mapping_file')
+if not os.path.isfile(mp):
+  mp = os.path.join(cwd, 'resources', 'mapping-tvbg.txt')
+log('mapping_file: %s' % mp)
 new_m3u = os.path.join(profile_dir, pl_name)
 log('Playlist path: %s' % new_m3u)
 
-with open(mapping_file) as f, open(new_m3u, 'w') as w:
+###################################################
+### Sort channels and write playlist
+###################################################
+n = 0
+with open(mp) as f, open(new_m3u, 'w') as w:
   w.write('#EXTM3U\n')
   lines = f.readlines()
   for l in lines:
@@ -102,7 +110,7 @@ with open(mapping_file) as f, open(new_m3u, 'w') as w:
       w.write(url + "\n")
       n += 1
       
-show_progress(95,'%s канала бяха пренаредени' % n)
+show_progress(96,'%s канала бяха пренаредени' % n)
 show_progress(97,'Плейлиста беше успешно записана')
 
 ###################################################
