@@ -4,7 +4,7 @@
     <category label="Настройки">
       <setting label="" type="bool" id="firstrun" visible="false" default="true"/>
       <setting label="Път до оригиналната m3u плейлиста" type="text"  id="m3u_url" default="" />
-      <setting label="Път до mapping файл" type="text"  id="mapping_file" default="" />
+      <setting label="Път до mapping файл" type="text"  id="mapping_file" default="mapping-tvbg.txt" />
       <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
       <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
       <setting type="sep"/>
