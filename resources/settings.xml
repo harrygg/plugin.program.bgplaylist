@@ -3,7 +3,9 @@
     <!-- General -->
     <category label="Настройки">
       <setting label="" type="bool" id="firstrun" visible="false" default="true"/>
-      <setting label="Път до оригиналната m3u плейлиста" type="text"  id="m3u_url" default="" />
+      <setting label="Локация на M3U файл" lvalues="30010|30011" id="m3u_path_type" type="enum" default="1" />
+      <setting label="Път до M3U плейлист" id="m3u_path" type="file" default="" visible="eq(-1,0)"/>
+      <setting label="Връзка (URL) до M3U плейлист" id="m3u_url" type="text" default="" visible="eq(-2,1)"/>
       <setting label="Път до mapping файл" type="text"  id="mapping_file" default="mapping-tvbg.txt" />
       <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
       <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
