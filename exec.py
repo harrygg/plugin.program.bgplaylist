@@ -63,7 +63,10 @@ def parse_playlist(lines):
           progress += 1
           show_progress(progress,'Извличане на канали от плейлиста')
 
-    show_progress(progress + 1,'Извлечени %s канала' % len(channels))
+    n_channels = len(channels)
+    if n_channels == 0:
+      log(old_m3u.encode('utf-8'))
+    show_progress(progress + 1,'Извлечени %s канала' % n_channels)
   except Exception, er:
     log(er, 4)
   return channels
@@ -98,21 +101,28 @@ def update(action, location, crash=None):
 def write_playlist(map):
   res = False
   with open(new_m3u, 'w') as w:
-    if len(map) != 0 and sorting:   
-      ### Sort channels and write playlist  
-      n = 0
+    n_map = len(map)
+    if n_map != 0 and sorting:   
+      ### progress bar
+      progress = 56
+      step = n_map / 40
+      ### Sort channels and write playlist
+      
+      n = 1
       w.write('#EXTM3U\n')
-      for m in map:
-        if not channel_disabled(m): 
-          name,id,group,logo = m.split(',')
-          log("Добавяне на сортиран канал: %s" % name)
+      for i in range(0, n_map):
+        if not channel_disabled(map[i]): 
+          name,id,group,logo = map[i].split(',')
+          log("Добавяне на сортиран канал: %s. %s" % (n, name))
           line = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n' % (id,group,logo.rstrip(),name)
           try :
             url = channels[name.decode('utf-8')]
             w.write(line)
             w.write(url + "\n")
             n += 1
-            raise KeyError
+            if i % step == 0:
+              show_progress(progress,'Добавяне на канал')
+              progress += 1
           except KeyError:
             log('Не е намерен мапинг за канал %s ' % name)
           except Exception, er:
@@ -172,11 +182,11 @@ log("m3u_file: " + m3u_file)
 if m3u_file.strip() == '':
   notify_error('Липсващ УРЛ за входна плейлиста')
 else:
-  lines = get_playlist()
-  if len(lines) == 0:
+  raw_content = get_playlist()
+  channels = parse_playlist(raw_content)
+  if len(channels) == 0:
     notify_error('Плейлистата не съдържа канали')
   else:
-    channels = parse_playlist(lines)
     map = get_map()
     write_playlist(map)
 
