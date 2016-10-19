@@ -40,35 +40,40 @@ def get_playlist_from_file():
     if os.path.isfile(m3u_file):
       with open(m3u_file) as f:
         old_m3u = f.readlines()
-        return f.readlines()
-    return r.text.splitlines()
+        return old_m3u
   except Exception, er:
     log(er, 4)
     return []  
 
 def parse_playlist(lines):
   channels = {}
-  try:
-    progress = 5
-    n_lines = len(lines)
-    step = n_lines / 50
+  #try:
+  progress = 5
+  n_lines = len(lines)
+  log("parse_playlist parsing %s rows" % n_lines)
+  step = n_lines / 50
 
-    for i in range(0, n_lines):
-      if lines[i].startswith("#EXTINF"):
-        name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
-        log("Извлечен канал: %s" % name.encode('utf-8'))
-        i += 1
-        channels[name] = lines[i]
-        if i % step == 0:
-          progress += 1
-          show_progress(progress,'Извличане на канали от плейлиста')
+  for i in range(0, n_lines):
+    if lines[i].startswith("#EXTINF"):
+      name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
+      
+      try: log("Извлечен канал: %s" % name.encode('utf-8'))
+      except UnicodeDecodeError:
+        try: log(name)
+        except: pass
+      
+      i += 1
+      channels[name] = lines[i]
+      if i % step == 0:
+        progress += 1
+        show_progress(progress,'Извличане на канали от плейлиста')
 
-    n_channels = len(channels)
-    if n_channels == 0:
-      log(old_m3u.encode('utf-8'))
-    show_progress(progress + 1,'Извлечени %s канала' % n_channels)
-  except Exception, er:
-    log(er, 4)
+  n_channels = len(channels)
+  if n_channels == 0:
+    log(old_m3u)
+  show_progress(progress + 1,'Извлечени %s канала' % n_channels)
+  #except Exception, er:
+  #  log(er, 4)
   return channels
 
 def get_map():
@@ -183,6 +188,7 @@ if m3u_file.strip() == '':
   notify_error('Липсващ УРЛ за входна плейлиста')
 else:
   raw_content = get_playlist()
+  log(len(raw_content))
   channels = parse_playlist(raw_content)
   if len(channels) == 0:
     notify_error('Плейлистата не съдържа канали')
