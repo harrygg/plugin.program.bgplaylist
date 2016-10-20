@@ -24,10 +24,11 @@ def get_playlist():
 def get_playlist_from_url():
   try:
     global old_m3u
+    show_progress(1, 'Getting playlist from %s ' % m3u_file)
     s = requests.Session()
-    show_progress(1, 'Сваляне на плейлиста от %s ' % m3u_file)
     v = xbmc.getInfoLabel("System.BuildVersion" )
     r = s.get(m3u_file, headers={"User-agent": "Kodi %s" % v})
+    show_progress(3, 'Parsing server response')
     old_m3u = r.text
     return r.text.splitlines()
   except Exception, er:
@@ -37,10 +38,12 @@ def get_playlist_from_url():
 def get_playlist_from_file():
   try:
     global old_m3u
+    show_progress(1, 'Getting playlist from %s ' % m3u_file)
     if os.path.isfile(m3u_file):
       with open(m3u_file) as f:
-        old_m3u = f.readlines()
-        return old_m3u
+        old_m3u = f.read()
+        show_progress(3, 'Parsing server response')
+        return f.readlines()
   except Exception, er:
     log(er, 4)
     return []  
@@ -70,7 +73,7 @@ def parse_playlist(lines):
 
   n_channels = len(channels)
   if n_channels == 0:
-    log(old_m3u)
+    log("Extracted 0 channels from %s" % old_m3u)
   show_progress(progress + 1,'Извлечени %s канала' % n_channels)
   #except Exception, er:
   #  log(er, 4)
