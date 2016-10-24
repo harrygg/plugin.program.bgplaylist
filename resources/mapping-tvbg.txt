@@ -1,13 +1,19 @@
 # Списъкът съдържа стойности разделени със запетая!
 # Всеки канал се въвежда на отделен ред със следните стойности: 
-#   * Име на канала както е въведен в плейлистата напр. BNT1 HD
-#   * Идентификатор на канала според ЕПС на epg.kodibg.org напр. BNT1
+#   * Име на канала - както е въведен в плейлистата напр. BNT1 HD
+#   * Идентификатор на канала - според ЕПГ на epg.kodibg.org напр. BNT1
 #   * Категория на канала напр. Национални
-#   * УРЛ към логото на канала
-# Ако липсва дадена стойност, на нейно място не се въвежда нищо, но запетаята е задължителна. 
+#   * УРЛ към логото на канала напр. http://logos.kodibg.org/bnt1.png
+# Например, следния ред в мапинг файла, 
+# BNT1 HD,BNT1,Национални,http://logos.kodibg.org/bnt1.png
+# Ще генерира следния ред в плейлист файла:
+# #EXTINF:-1 tvg-id="BNT1" group-name="Национални" tvg-logo="http://logos.kodibg.org/bnt1.png",BNT1 HD
+# Ако не знаем дадена стойност, на нейно място не се въвежда нищо, но разделителанта запетаята е задължителна. 
 # Следния пример показва, че имам въведена само категория за даден канал - лиспва ID и лого. 
 # HBO HD,,Филми,
-# За да изключите даден канал, започнете реда с табулация, интервал, или #
+# Това ще генерира следния ред в плейлистата (Той е валиден, но ще липсва ЕПГ и лого за канала)
+# #EXTINF:-1 tvg-id="" group-name="Национални" tvg-logo="",HBO HD
+# За да изключите даден канал от добавянето му в плейлистата, започнете реда с табулация, интервал, или #
 # Плейлистата следва реда в този списък, така че ако искате даден канал да се появява по-напред, 
 # предвижете неговия ред по-нагоре.
 
@@ -17,33 +23,20 @@ Nova,Nova,Национални,http://logos.kodibg.org/novatv.png
 bTV Action HD,bTVAction,Филми,http://logos.kodibg.org/btvaction.png
 BIT HD,BiT,Национални,http://logos.kodibg.org/bit.png
 Bulgaria on Air,BulgariaOnAir,Национални,http://logos.kodibg.org/bgonair.png
-HBO HD,,Филми,
-HBO 2 HD,,Филми,
-HBO 3 HD,,Филми,
+HBO HD,HBOHD,Филми,http://logos.kodibg.org/tvbg/hbo.png
+HBO 2 HD,HBOComedy,Филми,http://logos.kodibg.org/tvbg/hbo2.png
+HBO 3 HD,HBO3,Филми,http://logos.kodibg.org/tvbg/hbo3.png
 Diema Sport HD,DiemaSport,Спортни,http://logos.kodibg.org/diemasport.png
 Diema Sport 2 HD,DiemaSport2,Спортни,http://logos.kodibg.org/diemasport2.png
-Sky Sports 1,,Спортни,
-Sky Sports 2,,Спортни,
-Sport1 US HD,,Спортни,
-FOX Sports 1 NL,,Спортни,
-FOX Sports 2 NL,,Спортни,
-FOX Sports 3 NL,,Спортни,
-RING BG HD,,,
-  FOX Sports 4 NL,,Спортни,
-  FOX Sports 5 NL,,Спортни,
-  FOX Sports 6 NL,,Спортни,
+RING BG HD,RING,Спортни,http://logos.kodibg.org/mp/BBTS.png
 Sport+ HD,SportPlusHD,Спортни,http://logos.kodibg.org/sportplushd.png
 F+,FPlus,Филми,http://logos.kodibg.org/fplus.png
 TV+,TVPlus,Национални,http://logos.kodibg.org/tvplus.png
-beIN Sports 1 HD (fr),,Спортни,
-beIN Sports 2 HD (fr),,Спортни,
-beIN Sports 3 HD (fr),,Спортни,
 ТВ Европа,tveurope,Национални,http://logos.kodibg.org/tveuropa.png
 Канал 3,Kanal3,Национални,http://logos.kodibg.org/kanal3.png
 СКАТ,Skat,Национални,http://logos.kodibg.org/skat.png
-Cinemax HD,,Филми,
-Cinemax 2 HD,,Филми,
-bTV Comedy,bTVComedy,Филми,http://logos.kodibg.org/btvcomedy.png
+Cinemax HD,Cinemax,Филми,http://logos.kodibg.org/boxbg/63.png
+Cinemax 2 HD,Cinemax2,Филми,http://logos.kodibg.org/boxbg/64.png
 bTV Cinema,bTVCinema,Филми,http://logos.kodibg.org/btvcinema.png
 bTV Action,bTVAction,Филми,http://logos.kodibg.org/btvaction.png
 KinoNova,KinoNova,Филми,http://logos.kodibg.org/kinonova.png
@@ -56,30 +49,36 @@ NatGeo Wild HD,NatGeoWild,Документални,http://logos.kodibg.org/natge
 Viasat HD,,Документални,
 Discovery Channel,Discovery,Документални,http://logos.kodibg.org/discovery.png
 Discovery HD,DiscoveryHDShowcase,Документални,http://logos.kodibg.org/discoveryhdshowcase.png
-  БНТ 1,BNT1,Национални,http://logos.kodibg.org/bnt1.png
-  bTV,bTV,Национални,http://logos.kodibg.org/btv.png
-Russia Today,,Новини,
-RT News HD,,Новини,
-RT Docu HD,,Новини,
-CNN International HD,,Новини,
+Animal Planet,,Документални,http://logos.kodibg.org/animalplanet.png
+Russia Today,RussiaToday,Новини,http://logos.kodibg.org/portro/10205.png
+RT News HD,,Документални,
+RT Docu HD,,Документални,
+CNN International HD,CNN,Новини,http://logos.kodibg.org/dirbg/49.png
 BBC World HD,,Новини,
+FOX HD,FOX,Филми,http://logos.kodibg.org/fox.png
 FOX Crime HD,FOXCrime,Филми,http://logos.kodibg.org/foxcrime.png
-Eurosport DE HD,,Спортни,
-BG DNES HD,,,
-Discovery DE HD,,,http://logos.kodibg.org/discovery.png
-Nat Geo HD DE,,,http://logos.kodibg.org/natgeo.png
-Natgeo Wild EU HD,,,http://logos.kodibg.org/natgeowild.png
-Матч! ТВ HD,,Спортни,http://logos.kodibg.org/matchtv.png
+BG DNES HD,,Национални,http://logos.kodibg.org/bgdnestv.png
 FilmBox Extra HD,FilmBoXtraHD,Филми,http://logos.kodibg.org/filmboxextra.png
 FilmBox Plus HD,FilmBoxPlusHD,Филми,http://logos.kodibg.org/filmboxplus.png
 FilmBox Arthouse,FilmboxArthouseHD,Филми,http://logos.kodibg.org/filmboxarthouse.png
 Action+ HD,ActionPlus,Филми,http://logos.kodibg.org/actionplus.png
-Sport Klub 1 HR,,,
-Sport Klub 2 HR,,,
-Sport Klub 3 HR,,,
-  BNT1 +1,,,
+Diema,Diema,Филми,http://logos.kodibg.org/diema.png
+Alfa TV,Alfa,Национални,http://logos.kodibg.org/alfa.png
+TV1 HD,TV1,Национални,http://logos.kodibg.org/tv1.png
+100% Auto Moto TV,AutoMoto,Спортни,http://logos.kodibg.org/automoto.png
+ВТК,vtk,Национални,http://logos.kodibg.org/vtk.png
+Евроком,Eurocom,Национални,http://logos.kodibg.org/evrokom.png
+Канал 0,,Регионални,http://logos.kodibg.org/kanal0.png
+TV 1000,TV1000,Филми,http://logos.kodibg.org/tv1000.png
+AXN,AXN,Филми,http://logos.kodibg.org/axn.png
+AXN White,AXNWhite,Филми,http://logos.kodibg.org/axnwhite.png
+AXN Black,AXNBlack,Филми,http://logos.kodibg.org/axnblack.png
+Bloomberg BG HD,Bloomberg,Национални,http://logos.kodibg.org/bloombergtvbulgaria.png
+Travel HD,TravelHD,Национални,http://logos.kodibg.org/travelhd.png
+Travel Channel HD,TravelChannel,Национални,http://logos.kodibg.org/travelchannel.png
+BNT1 +1,,,
 BTV +1,,,
 Nova +1,,,
-  BNT1 +2,,,
+BNT1 +2,,,
 BTV +2,,,
 Nova +2,,,

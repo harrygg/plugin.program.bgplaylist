@@ -247,11 +247,12 @@ name = addon.getAddonInfo('name').decode('utf-8')
 profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
 cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
 c_debug = True if addon.getSetting('debug') == 'true' else False
-mp = addon.getSetting('mapping_file')
-if not os.path.isfile(mp):
-  mp = os.path.join(cwd, 'resources', mp)
-  if not os.path.isfile(mp):
-    mp = os.path.join(cwd, 'resources', 'mapping-tvbg.txt')
+predefined_mf = addon.getSetting('mapping_type') == "0"
+mp = os.path.join(cwd, 'resources', addon.getSetting('mapping_file'))
+if not predefined_mf:
+  custom_mp = os.path.join(cwd, 'resources', addon.getSetting('custom_mapping_file'))
+  if os.path.isfile(custom_mp):
+    mp = custom_mp
 log('mapping file: %s' % mp)
 sorting = True
 log('sorting: %s' % sorting)

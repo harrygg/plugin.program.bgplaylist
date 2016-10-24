@@ -6,13 +6,20 @@
       <setting label="Локация на M3U файл" lvalues="30010|30011" id="m3u_path_type" type="enum" default="1" />
       <setting label="Път до M3U плейлист" id="m3u_path" type="file" default="" visible="eq(-1,0)"/>
       <setting label="Връзка (URL) до M3U плейлист" id="m3u_url" type="text" default="" visible="eq(-2,1)"/>
-      <setting label="Път до mapping файл" type="fileenum"  id="mapping_file" values="resources" mask="*.txt" default="mapping-tvbg.txt" />
-      <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
-      <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
       <setting type="sep"/>
       <setting label="Запази плейлистата в друга директория" type="bool"   id="copy_playlist" default="false"/>
       <setting label="Път до директорията" type="folder" id="copy_to_folder" default="" option="writeable" visible="eq(-1,true)"/>
+    </category>
+    <category label="Мапинг">
+      <setting label="Тип на mapping файл" lvalues="30012|30013" id="mapping_type" type="enum" default="0" />
+      <setting label="Предефиниран mapping файл:" type="fileenum"  id="mapping_file" values="resources" mask="*.txt" default="mapping-tvbg.txt"  visible="eq(-1,0)"/>
+      <setting label="Път до mapping файл" type="file"  id="custom_mapping_file"  visible="eq(-2,1)"/>
+      <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
       <setting type="sep"/>
+      <!--setting label="Игнорирай канали за които няма информация в мапинг файла" type="bool" id="ignore_no_mapped_channels" default="true"/-->
+    </category>
+    <category label="Други">
+      <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
       <setting label="Разширен журнал (Дебъг)" type="bool"   id="debug" default="false"/>
     </category>
 </settings>
