@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
-DEBUG = False
+from resources.mapping import *
+DEBUG = True
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
@@ -43,7 +44,7 @@ def iter_lines(r, chunk_size, delimiter = None):
       show_progress(progress, 'Parsing server response')
     i += chunk_size
     if DEBUG:
-      xbmc.sleep(100) 
+      xbmc.sleep(50) 
     if pending is not None:
       chunk = pending + chunk
     if delimiter:
@@ -102,7 +103,7 @@ def file_iter_lines(f, chunk_size=1024):
   i = 0 
   while True:
     if DEBUG:
-      xbmc.sleep(100) 
+      xbmc.sleep(50) 
     if i >= chunk_size:
       progress += 1 
       show_progress(progress, 'Parsing file content')
@@ -153,10 +154,10 @@ def parse_playlist(lines):
       if lines[i].startswith("#EXTINF"):
         name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
         
-        try: log("Извлечен канал: %s" % name.encode('utf-8'))
-        except UnicodeDecodeError:
-          try: log(name)
-          except: pass
+        #try: log("Извлечен канал: %s" % name.encode('utf-8'))
+        ##except UnicodeDecodeError:
+        #  try: log(name)
+        #  except: pass
         
         i += 1
         channels[name] = lines[i]
@@ -172,16 +173,6 @@ def parse_playlist(lines):
   except Exception, er:
     log(er, xbmc.LOGERROR)
   return channels
-
-def get_map():
-  map = []
-  try:
-    with open(mp) as f:
-      for line in f: 
-        map.append(line)
-  except Exception, er:
-    log(er, xbmc.LOGERROR)  
-  return map
 
 def channel_disabled(map):
   return (map.startswith('\t') or map.startswith(' ') or map.startswith('#') or map.startswith('\r') or map.startswith('\n'))
@@ -201,35 +192,66 @@ def update(action, location, crash=None):
   except Exception, er:
     log(er)
 
+def load_channel_order():
+  channels = []
+  try:
+    if os.path.isfile(order_file):
+      with open(order_file) as f:
+        for l in f:
+          channels.append(l.rstrip())
+    else:
+      notify_error('Липсващ шаблон с подредба на канали')
+  except Exception, er:
+    log(er, xbmc.LOGERROR)
+  return channels
+    
 def write_playlist():
   try:
     res = False
     global progress
     with open(new_m3u, 'w') as w:
-      n_map = len(map)
-      if n_map != 0 and sorting:   
-        progress_step = n_map / 10
+      ordered_channels = load_channel_order()
+      n_order = len(ordered_channels)
+      if n_order != 0 and sorting:   
+        progress_step = n_order / 10
         ### Sort channels and write playlist  
         n = 1
         w.write('#EXTM3U\n')
-        for i in range(0, n_map):
-          if not channel_disabled(map[i]): 
-            name,id,group,logo = map[i].split(',')
-            log("Добавяне на сортиран канал: %s. %s" % (n, name))
-            line = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n' % (id,group,logo.rstrip(),name)
-            try :
-              url = channels[name.decode('utf-8')]
-              w.write(line)
-              w.write(url + "\n")
-              n += 1
-              if i % progress_step == 0:
-                show_progress(progress, 'Добавяне на канал')
-                progress += 1
-            except KeyError:
-              log('Не е намерен мапинг за канал %s ' % name)
-            except Exception, er:
-              log(er, xbmc.LOGERROR)         
+        for i in range(0, n_order):
+          c_name = ordered_channels[i]
+          try: id = channels_map[c_name]['id']
+          except: id = c_name
+          try: group = channels_map[c_name]['group']
+          except: group = ''
+          try: logo = channels_map[c_name]['logo']
+          except: logo = ''
+          #log("Добавяне на сортиран канал: %s. %s" % (n, c_name))
+          
+          line = EXTINF % (id,group,logo,c_name)
+          try :
+            url = channels[c_name]
+            w.write(line)
+            w.write(url + "\n")
+            del channels[c_name]
+            n += 1
+            if i % progress_step == 0:
+              show_progress(progress, 'Добавяне на канал')
+              progress += 1
+          except KeyError:
+            log('Не е намерен мапинг за канал %s ' % c_name)
+          except Exception, er:
+            log(er, xbmc.LOGERROR)
         show_progress(96,'%s канала бяха пренаредени' % n)
+        ###################################################
+        ### Add missing channels if option is True
+        ###################################################
+        log('Останали несортирани канали в плейлистата: %s' % len(channels))
+        if add_missing:
+          log('Добавянето на несортираните канали е разрешено')
+          for k,v in channels.items():
+            line = EXTINF % (k,'','',k)
+            w.write(line)
+            w.write(v + "\n")
         show_progress(97,'Плейлиста беше успешно записана')
       else: 
         ### Do not sort channels
@@ -247,13 +269,13 @@ name = addon.getAddonInfo('name').decode('utf-8')
 profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
 cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
 c_debug = True if addon.getSetting('debug') == 'true' else False
-predefined_mf = addon.getSetting('mapping_type') == "0"
-mp = os.path.join(cwd, 'resources', addon.getSetting('mapping_file'))
-if not predefined_mf:
-  custom_mp = os.path.join(cwd, 'resources', addon.getSetting('custom_mapping_file'))
-  if os.path.isfile(custom_mp):
-    mp = custom_mp
-log('mapping file: %s' % mp)
+add_missing = True if addon.getSetting('add_missing') == 'true' else False
+EXTINF = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n'
+order_file = addon.getSetting('order_file')
+if not os.path.isfile(order_file):
+  order_file = os.path.join(cwd, 'resources', 'order.txt')
+log('order file: %s' % order_file)
+
 sorting = True
 log('sorting: %s' % sorting)
 pl_name = 'bgpl.m3u'
@@ -294,7 +316,6 @@ try:
     if len(channels) == 0:
       notify_error('Плейлистата не съдържа канали')
     else:
-      map = get_map()
       write_playlist()
 
       ###################################################
