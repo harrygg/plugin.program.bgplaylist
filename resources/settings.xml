@@ -10,7 +10,7 @@
       <setting label="Запази плейлистата в друга директория" type="bool"   id="copy_playlist" default="false"/>
       <setting label="Път до директорията" type="folder" id="copy_to_folder" default="" option="writeable" visible="eq(-1,true)"/>
       <setting type="sep"/>
-      <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>
+      <setting label="Генерирай плейлиста на всеки N часа" type="slider" id="run_on_interval" default="12" range="1,1,24" option="int"/>      
     </category>
     <category label="Подредба">
       <setting label="Път до шаблон с подредба на канали" type="file"  id="order_file" default="resources/order.txt" />
@@ -18,6 +18,10 @@
     </category>
     <category label="Други">
       <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
+      <setting type="sep"/>
+      <setting label="Експортирай имената на каналите от плейлистата" type="bool" id="export_names" default="false"/>
+      <setting label="Път до директорията за експортиране" type="folder" id="export_to_folder" default="" option="writeable" visible="eq(-1,true)"/>
+      <setting type="sep"/>
       <setting label="Разширен журнал (Дебъг)" type="bool"   id="debug" default="false"/>
     </category>
 </settings>

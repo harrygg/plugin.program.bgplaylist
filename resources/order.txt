@@ -9,15 +9,10 @@ HBO 2 HD
 HBO 3 HD
 Diema Sport HD
 Diema Sport 2 HD
-Sport1 US HD
-Sky Sports 1
-Sky Sports 2
-FOX Sports 2 NL
 RING BG HD
 Sport+ HD
 F+
 TV+
-bTV Action HD
 KinoNova
 bTV Cinema
 ТВ Европа
@@ -26,9 +21,16 @@ Cinemax 2 HD
 FilmBox Plus HD
 Action+ HD
 FilmBox Extra HD
-BNT1 +1
-BTV +1
-Nova +1
-BNT1 +2
-BTV +2
-Nova +2
+FOX HD
+History Channel
+Viasat Explorer
+Viasat History
+Viasat Nature
+Animal Planet
+Discovery Channel
+Discovery Science
+Discovery World
+National Geographic
+NatGeo HD
+NatGeo Wild
+NatGeo Wild HD

@@ -143,6 +143,7 @@ def get_playlist_from_file(progress_max):
 
 def parse_playlist(lines):
   channels = {}
+  exported_names = ''
   try:
     global progress
     n_lines = len(lines)
@@ -154,6 +155,8 @@ def parse_playlist(lines):
       if lines[i].startswith("#EXTINF"):
         name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
         
+        exported_names += name + '\n'
+          
         #try: log("Извлечен канал: %s" % name.encode('utf-8'))
         ##except UnicodeDecodeError:
         #  try: log(name)
@@ -169,7 +172,10 @@ def parse_playlist(lines):
 
     if n == 0:
       log("Extracted 0 channels from m3u content: \n%s" % source_m3u)
-
+    if export_names:
+      with open(names_file, 'w') as n:
+        n.write(exported_names)
+      
   except Exception, er:
     log(er, xbmc.LOGERROR)
   return channels
@@ -270,13 +276,22 @@ profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8'
 cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
 c_debug = True if addon.getSetting('debug') == 'true' else False
 add_missing = True if addon.getSetting('add_missing') == 'true' else False
-EXTINF = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n'
+export_names = True if addon.getSetting('export_names') == 'true' else False
+if export_names:
+  export_to_folder = addon.getSetting('export_to_folder')
+  if os.path.isdir(export_to_folder):
+    names_file = os.path.join(export_to_folder, 'names.txt')
+  else:
+    names_file = os.path.join(profile_dir, 'names.txt')
+
+order_file = addon.getSetting('order_file')
 order_file = addon.getSetting('order_file')
 if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
 log('order file: %s' % order_file)
 
 sorting = True
+EXTINF = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n'
 log('sorting: %s' % sorting)
 pl_name = 'bgpl.m3u'
 source_m3u = ''

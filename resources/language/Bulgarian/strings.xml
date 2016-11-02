@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-    <string id="30010">Отдалечен</string>
-    <string id="30011">Локален</string>
+    <string id="30010">Локален</string>
+    <string id="30011">Отдалечен</string>
     <string id="30012">Предефиниран</string>
     <string id="30013">Локален</string>
 </strings>
