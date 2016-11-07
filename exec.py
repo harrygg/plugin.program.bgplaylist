@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
 from resources.mapping import *
-DEBUG = True
+DEBUG = False
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
@@ -254,10 +254,16 @@ def write_playlist():
         log('Останали несортирани канали в плейлистата: %s' % len(channels))
         if add_missing:
           log('Добавянето на несортираните канали е разрешено')
-          for k,v in channels.items():
-            line = EXTINF % (k,'','',k)
+          for name,url in channels.items():
+            try: id = channels_map[name]['id']
+            except: id = name
+            try: group = channels_map[name]['group']
+            except: group = ''
+            try: logo = channels_map[name]['logo']
+            except: logo = ''
+            line = EXTINF % (id,group,logo,name)
             w.write(line)
-            w.write(v + "\n")
+            w.write(url + "\n")
         show_progress(97,'Плейлиста беше успешно записана')
       else: 
         ### Do not sort channels
@@ -285,13 +291,12 @@ if export_names:
     names_file = os.path.join(profile_dir, 'names.txt')
 
 order_file = addon.getSetting('order_file')
-order_file = addon.getSetting('order_file')
 if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
 log('order file: %s' % order_file)
 
 sorting = True
-EXTINF = '#EXTINF:-1 tvg-id="%s" group-name="%s" tvg-logo="%s",%s\n'
+EXTINF = '#EXTINF:-1 tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
 log('sorting: %s' % sorting)
 pl_name = 'bgpl.m3u'
 source_m3u = ''

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<addon id="plugin.program.bgplaylist" name="BG Playlist Reorder" version="1.1.3" provider-name="harrygg">
+<addon id="plugin.program.bgplaylist" name="BG Playlist Reorder" version="1.1.4" provider-name="harrygg">
   <requires>
     <import addon="xbmc.python" version="2.19.0"/>
     <import addon="script.module.garepobg" version="0.1.3"/>
@@ -10,7 +10,7 @@
   <extension point="xbmc.addon.metadata">
         <summary>BG Playlist Reorder</summary>
         <summary lang="en">BG Playlist Reorder</summary>
-        <description lang="en">Reorders playlists, adds static IDs, names and logos</description>
+        <description lang="en">Reorders playlists, adds static IDs, names and logos. For use with Bulgarian EPGs</description>
         <disclaimer lang="en">BG Playlist Reorder</disclaimer>
         <language>en</language>
         <platform>all</platform>
