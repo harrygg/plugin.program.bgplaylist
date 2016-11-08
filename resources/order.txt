@@ -9,6 +9,18 @@ HBO 2 HD
 HBO 3 HD
 Diema Sport HD
 Diema Sport 2 HD
+Viasat Explorer
+Viasat History
+Viasat Nature
+Animal Planet
+Discovery Channel
+Discovery Science
+Discovery World
+National Geographic
+NatGeo HD
+NatGeo Wild HD
+History Channel
+History 2 HD
 RING BG HD
 Sport+ HD
 F+
@@ -22,15 +34,11 @@ FilmBox Plus HD
 Action+ HD
 FilmBox Extra HD
 FOX HD
-History Channel
-Viasat Explorer
-Viasat History
-Viasat Nature
-Animal Planet
-Discovery Channel
-Discovery Science
-Discovery World
-National Geographic
-NatGeo HD
-NatGeo Wild
-NatGeo Wild HD
+FOX Crime HD
+FOX Life HD
+AXN
+AXN White
+AXN Black
+Skat
+Alfa
+Kanal 3
