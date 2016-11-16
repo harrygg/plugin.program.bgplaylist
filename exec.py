@@ -141,11 +141,16 @@ def get_playlist_from_file(progress_max):
     log(er, xbmc.LOGERROR)
   return lines
 
+def get_channel_info_from_map(name, attr):
+  try: ret = channels_map[name][attr]
+  except: ret = ""
+  return ret
+  
 def parse_playlist(lines):
   channels = {}
   exported_names = ''
   try:
-    global progress
+    global progress, raw_radio_streams
     n_lines = len(lines)
     #log("parse_playlist parsing %s rows" % n_lines)
     progress_step = n_lines / 15
@@ -154,21 +159,20 @@ def parse_playlist(lines):
     for i in range(0, n_lines):
       if lines[i].startswith("#EXTINF"):
         name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
-        
         exported_names += name + '\n'
-          
-        #try: log("Извлечен канал: %s" % name.encode('utf-8'))
-        ##except UnicodeDecodeError:
-        #  try: log(name)
-        #  except: pass
-        
-        i += 1
-        channels[name] = lines[i]
-
-        n += 1
-        if i % progress_step == 0:
-          progress += 1
-          show_progress(progress,'Извличане на канали от плейлиста')
+        is_radio = "radio=\"True" in lines[i]
+        if is_radio:
+          logo = get_channel_info_from_map(name,'logo')
+          raw_radio_streams += '#EXTINF:-1 radio="True" group-title="Радио" tvg-logo="%s",%s\n' % (logo, name)
+          raw_radio_streams += lines[i + 1] + '\n'
+          i += 2
+        else:       
+          i += 1
+          channels[name] = lines[i]
+          n += 1
+          if i % progress_step == 0:
+            progress += 1
+            show_progress(progress,'Извличане на канали от плейлиста')
 
     if n == 0:
       log("Extracted 0 channels from m3u content: \n%s" % source_m3u)
@@ -225,12 +229,10 @@ def write_playlist():
         w.write('#EXTM3U\n')
         for i in range(0, n_order):
           c_name = ordered_channels[i]
-          try: id = channels_map[c_name]['id']
-          except: id = c_name
-          try: group = channels_map[c_name]['group']
-          except: group = ''
-          try: logo = channels_map[c_name]['logo']
-          except: logo = ''
+          id = get_channel_info_from_map(c_name, 'id')
+          if id is "": id = c_name
+          group = get_channel_info_from_map(c_name, 'group')
+          logo = get_channel_info_from_map(c_name, 'logo')
           #log("Добавяне на сортиран канал: %s. %s" % (n, c_name))
           
           line = EXTINF % (id,group,logo,c_name)
@@ -254,16 +256,21 @@ def write_playlist():
         log('Останали несортирани канали в плейлистата: %s' % len(channels))
         if add_missing:
           log('Добавянето на несортираните канали е разрешено')
-          for name,url in channels.items():
-            try: id = channels_map[name]['id']
-            except: id = name
-            try: group = channels_map[name]['group']
-            except: group = ''
-            try: logo = channels_map[name]['logo']
-            except: logo = ''
-            line = EXTINF % (id,group,logo,name)
+          for c_name,url in channels.items():
+            id = get_channel_info_from_map(c_name, 'id')
+            if id is "": id = c_name
+            group = get_channel_info_from_map(c_name, 'group')
+            logo = get_channel_info_from_map(c_name, 'logo')
+            line = EXTINF % (id,group,logo,c_name)
             w.write(line)
             w.write(url + "\n")
+        
+        ###################################################
+        ### Add radio channels if such are found during the playlist parsing
+        ###################################################       
+        if raw_radio_streams != "":
+          w.write(raw_radio_streams)
+          
         show_progress(97,'Плейлиста беше успешно записана')
       else: 
         ### Do not sort channels
@@ -303,6 +310,7 @@ source_m3u = ''
 new_m3u = os.path.join(profile_dir, pl_name)
 log('Playlist path: %s' % new_m3u)
 progress = 0
+raw_radio_streams = ""
 
 if addon.getSetting('firstrun') == 'true':
   addon.setSetting('firstrun', 'false')

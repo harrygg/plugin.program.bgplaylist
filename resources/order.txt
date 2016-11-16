@@ -1,3 +1,4 @@
+24 Kitchen HD
 BNT1 HD
 bTV HD
 Nova
@@ -16,7 +17,6 @@ Animal Planet
 Discovery Channel
 Discovery Science
 Discovery World
-National Geographic
 NatGeo HD
 NatGeo Wild HD
 History Channel
@@ -41,4 +41,4 @@ AXN White
 AXN Black
 Skat
 Alfa
-Kanal 3
+Канал 3
