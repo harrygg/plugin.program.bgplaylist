@@ -60,7 +60,7 @@ channels_map = {
   "Bloomberg BG HD":{"id":"Bloomberg", "group":"Национални","logo":"http://logos.kodibg.org/bloombergtvbulgaria.png"},
   "Bloomberg BG":{"id":"BloombergBG", "group":"Национални","logo":"http://logos.kodibg.org/bloombergtvbulgaria.png"},
   "Bloomberg TV Bulgaria":{"id":"BloombergBG", "group":"Национални","logo":"http://logos.kodibg.org/bloombergtvbulgaria.png"},
-  "Viasat Explorer":{"id":"ViasatExplorer", "group":"Документални","logo":"http://logos.kodibg.org/viasatexplorer.png"},
+  "Viasat Explorer":{"id":"ViasatExplorer", "group":"Документални","logo":"http://logos.kodibg.org/viasatexplore.png"},
   "Viasat History":{"id":"ViasatHistory", "group":"Документални","logo":"http://logos.kodibg.org/viasathistory.png"},
   "Viasat HD":{"id":"Viasat Nature/History HD", "group":"Документални","logo":"http://logos.kodibg.org/viasathistory.png"},
   "Viasat Nature":{"id":"ViasatNature", "group":"Документални","logo":"http://logos.kodibg.org/viasathistory.png"},
@@ -710,8 +710,8 @@ channels_map = {
   "Наш Футбол HD":{"id":"Наш Футбол HD", "group":"Спортни","logo":"http://avatars.mds.yandex.net/get-tv-channel-logos/28884/2a00000152365a12ea58fd1daa7ea78b64b3/z"},
   "Тест: Наш Футбол":{"id":"НТВ-ПЛЮС Наш Футбол", "group":"Спорт","logo":"http://avatars.mds.yandex.net/get-tv-channel-logos/28884/2a00000152365a12ea58fd1daa7ea78b64b3/z"},
   "Конный Мир HD":{"id":"Конный Мир", "group":"Спортни","logo":"http://avatars.mds.yandex.net/get-tv-channel-logos/55846/2a000001533cdd17887643d3fb857edbe0a6/z"},
-  "Viasat Sport HD":{"id":"Viasat Sport HD", "group":"Спортни","logo":"http://vignette4.wikia.nocookie.net/logopedia/images/e/ef/FileViasat_sport_hd.png/revision/latest/scale-to-width-down/185"}, 
-  ###Erotic
+  "Viasat Sport":{"id":"Viasat Sport", "group":"Спортни","logo":"https://avatars.mds.yandex.net/get-tv-shows/27487/2a0000015185956a2dfb4c68f0cd30f05dd7/orig"}, 
+  ###Erotic  
   "Private":{"id":"Private", "group":"Възрастни","logo":""},
   "Sexto Senso":{"id":"Sexto Senso", "group":"Възрастни","logo":""},
   "SCT Exotica":{"id":"SCT Exotica", "group":"Възрастни","logo":""},
