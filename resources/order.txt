@@ -1,4 +1,5 @@
 24 Kitchen HD
+БНТ 1
 BNT1 HD
 bTV HD
 Nova
@@ -10,7 +11,7 @@ HBO 2 HD
 HBO 3 HD
 Diema Sport HD
 Diema Sport 2 HD
-Viasat Explorer
+Viasat Explore
 Viasat History
 Viasat Nature
 Animal Planet
