@@ -158,7 +158,7 @@ def parse_playlist(lines):
     
     for i in range(0, n_lines):
       if lines[i].startswith("#EXTINF"):
-        name = re.compile(',\d*\.*\s*(.*)').findall(lines[i])[0]
+        name = re.compile(',\s*(.*)').findall(lines[i])[0]
         exported_names += name + '\n'
         is_radio = "radio=\"True" in lines[i]
         if is_radio:
