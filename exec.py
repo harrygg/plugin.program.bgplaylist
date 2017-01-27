@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
-from resources.mapping import *
+import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs, json
+#from resources.mapping import *
+from resources.assets import *
 DEBUG = False
 
 def log(msg, level = xbmc.LOGNOTICE):
@@ -142,7 +143,8 @@ def get_playlist_from_file(progress_max):
   return lines
 
 def get_channel_info_from_map(name, attr):
-  try: ret = channels_map[name][attr]
+  try: 
+    ret = map[name][attr]
   except: ret = ""
   return ret
   
@@ -301,6 +303,11 @@ order_file = addon.getSetting('order_file')
 if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
 log('order file: %s' % order_file)
+
+url = "https://raw.githubusercontent.com/harrygg/plugin.program.bgplaylist/master/resources/mapping.json.gz"
+backup = os.path.join(cwd, 'resources', 'mapping.json')
+a = Assets(profile_dir, url, backup, xbmc.log)
+map = json.load(a.file)
 
 sorting = True
 EXTINF = '#EXTINF:-1 tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
