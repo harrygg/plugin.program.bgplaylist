@@ -132,7 +132,6 @@
   "English Club":{"id":"English Club", "group":"Национални","logo":"http://english-club.tv/wp-content/uploads/2015/09/logo-round.png"},
   "English Club HD":{"id":"English Club", "group":"Национални","logo":"http://english-club.tv/wp-content/uploads/2015/09/logo-round.png"},
   "Movie Star":{"id":"MovieStar", "group":"Филми","logo":"http://logos.kodibg.org/moviestar.png"},
-    ## Movies
   "PPV 1 (demo)":{"id":"PPV 1 (demo)", "group":"","logo":""},
   "PPV 2 (demo)":{"id":"PPV 2 (demo)", "group":"","logo":""},
   "PPV 3 (demo)":{"id":"PPV 3 (demo)", "group":"","logo":""},
@@ -167,8 +166,6 @@
   "Cinemax 2":{"id":"Cinemax 2", "group":"Филми","logo":"http://logos.kodibg.org/cinemax2.png"},
   "Cinemax HD":{"id":"Cinemax", "group":"Филми","logo":"http://logos.kodibg.org/cinemax.png"},
   "Cinemax 2 HD":{"id":"Cinemax 2", "group":"Филми","logo":"http://logos.kodibg.org/cinemax2.png"},
-  
-    ### Спортни
   "Mtel Sport 1 HD":{"id":"Mtel Sport 1 HD", "group":"Спортни","logo":"https://media.mtel.bg/newsite2015/images/mtel-sport/mtel-sport-1-logo-290x80px.png"},
   "Mtel Sport 1":{"id":"Mtel Sport 1 HD", "group":"Спортни","logo":"https://media.mtel.bg/newsite2015/images/mtel-sport/mtel-sport-1-logo-290x80px.png"},
   "Eurosport HD":{"id":"Eurosport HD", "group":"Спортни","logo":"http://www.vivacom.bg/web/files/richeditor/tv/tv-channels-logos/eurosport1-hd-logo.png"},
@@ -284,8 +281,6 @@
   "RAI Sport 1":{"id":"RAI Sport 1 HD", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_1.png"},
   "RAI Sport 1 HD":{"id":"RAI Sport 1 HD", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_1.png"},
   "RAI Sport 2":{"id":"RAI Sport 2", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_2.png"},   
-  
-  ### English
   "Sky 1":{"id":"Sky 1", "group":"Филми","logo":"https://upload.wikimedia.org/wikipedia/en/thumb/9/91/Sky1_logo_2011.svg/640px-Sky1_logo_2011.svg.png"},
   "Sky 1 +1":{"id":"Sky 1 +1", "group":"Филми","logo":"https://upload.wikimedia.org/wikipedia/en/thumb/9/91/Sky1_logo_2011.svg/640px-Sky1_logo_2011.svg.png"},
   "Sky 2":{"id":"Sky 2", "group":"Филми","logo":"https://upload.wikimedia.org/wikipedia/en/thumb/4/47/Sky2_logo_2011.svg/640px-Sky2_logo_2011.svg.png"},
@@ -435,7 +430,6 @@
   "Fen Folk":{"id":"Fen Folk", "group":"Музикални","logo":"http://logos.kodibg.org/fenfolk.png"},
   "Fen Folk TV":{"id":"Fen Folk", "group":"Музикални","logo":"http://logos.kodibg.org/fenfolk.png"},
   "FEN HD":{"id":"FEN HD", "group":"Музикални","logo":"http://logos.kodibg.org/fentv.png"},
-  "Balkanika":{"id":"Balkanika", "group":"Музикални","logo":"http://logos.kodibg.org/balkanika.png"},
   "DSTV":{"id":"DSTV", "group":"Музикални","logo":"http://logos.kodibg.org/dstv.png"},
   "Фолклор ТВ":{"id":"FolklorTV", "group":"Музикални","logo":"http://logos.kodibg.org/folklortv.png"},
   "Тянков HD":{"id":"TiankovFolk", "group":"Музикални","logo":"http://logos.kodibg.org/tiankovpop.png"},
@@ -492,7 +486,6 @@
   "RTP Int":{"id":"rtp_int", "group":"Тематични","logo":""},
   "RTVE":{"id":"RTVE", "group":"Тематични","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Logo_RTVE.svg/130px-Logo_RTVE.svg.png"},
   "TVE":{"id":"TVE", "group":"Тематични","logo":"https://upload.wikimedia.org/wikipedia/commons/7/7b/TVE_logos.png"},
-   ### Италиански
   "RAI News":{"id":"RAI News", "group":"Италиански","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/RAI_News_2010_neu_Logo.svg/320px-RAI_News_2010_neu_Logo.svg.png"},
   "RAI 1":{"id":"RAI 1", "group":"Италиански","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Rai_1_logo.svg/318px-Rai_1_logo.svg.png"},
   "Rai Uno":{"id":"RAI 1", "group":"Италиански","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Rai_1_logo.svg/318px-Rai_1_logo.svg.png"},
@@ -509,8 +502,6 @@
   "SkyIT Cinema Comedy":{"id":"SkyIT Cinema Comedy", "group":"Италиански","logo":""}, 
   "SkyIT Cinema +1":{"id":"SkyIT Cinema +1", "group":"Италиански","logo":""}, 
   "Discovery IT":{"id":"Discovery IT", "group":"Италиански","logo":""}, 
-
-  ### Немски
   "Tagesschau 24":{"id":"Tagesschau 24", "group":"Немски","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Tagesschau24-2012.svg/301px-Tagesschau24-2012.svg.png"},
   "Tagesschau 24 HD":{"id":"Tagesschau 24", "group":"Немски","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Tagesschau24HD.svg/799px-Tagesschau24HD.svg.png"},
   "ORF1":{"id":"ORF1", "group":"Немски","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/ORF1_logo.svg/320px-ORF1_logo.svg.png"},
@@ -561,8 +552,6 @@
   "MGM HD":{"id":"MGM HD", "group":"Немски","logo":"http://vignette3.wikia.nocookie.net/logopedia/images/6/62/MGM_HD_UK.png/revision/latest/scale-to-width-down/250"},
   "Eins Plus HD":{"id":"Eins Plus HD", "group":"Немски","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/EinsPlus_HD.png/320px-EinsPlus_HD.png"},
   "SR Fernsehen HD":{"id":"SR Fernsehen HD", "group":"Немски","logo":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/SR_Fernsehen_HD_Logo.png/320px-SR_Fernsehen_HD_Logo.png"},
-
-  ### Russian
   "Первый Инт. канал (тест)":{"id":"Первый канал HD (RU)", "group":"Руски","logo":"http://avatars.mds.yandex.net/get-tv-shows/70764/2a000001518595815f61238b1893ded04218/orig"},
   "Первый канал (EUR)":{"id":"Первый канал HD (RU)", "group":"Руски","logo":"http://avatars.mds.yandex.net/get-tv-shows/70764/2a000001518595815f61238b1893ded04218/orig"},
   "Первый канал HD (RU)":{"id":"Первый канал HD (RU)", "group":"Руски","logo":"http://avatars.mds.yandex.net/get-tv-channel-logos/28884/2a000001519dc87ac3990967fa54f2f9c24f/z"},
@@ -621,10 +610,6 @@
   "5 канал (Укр)":{"id":"5 канал (Укр)", "group":"Руски","logo":"http://img.teleguide.info/channel/300058.gif"},
   "Тонис HD (Укр)":{"id":"Тонис HD (Укр)", "group":"Руски","logo":"http://img.teleguide.info/channel/320.gif"},
   "HD Fashion (Укр)":{"id":"HD Fashion (Укр)", "group":"Руски","logo":""},
-  "Armenia":{"id":"Armenia", "group":"Руски","logo":""},
-  "Armenia 1":{"id":"Armenia", "group":"Руски","logo":""},
-  
-  #French
   "TF1 HD":{"id":"TF1 HD", "group":"Френски","logo":""},
   "La Une HD":{"id":"La Une HD", "group":"Френски","logo":""},
   "La Deux":{"id":"La Deux", "group":"Френски","logo":""},
@@ -642,8 +627,6 @@
   "RTL 9 HD":{"id":"RTL9 (Fr)", "group":"Френски","logo":""},
   "BFM Business HD":{"id":"BFM Business HD", "group":"Френски","logo":""},
   "TV 5 Monde HD ":{"id":"TV 5 Monde HD ", "group":"Френски","logo":""},
-  
-  ### turkish
   "Kanal 7 (tr)":{"id":"Kanal 7 (tr)", "group":"Турски","logo":""},
   "TRT 1":{"id":"TRT 1", "group":"Турски","logo":""},
   "Salon 1 HD":{"id":"Salon 1 HD", "group":"Турски","logo":"http://contentlibrary.digiturk.com.tr/Channel/36/Image/salon01_big.jpg"},
@@ -697,9 +680,7 @@
   "Planet Mutfak":{"id":"Planet Mutfak", "group":"Турски","logo":""},
   "Planet Pembe":{"id":"Planet Pembe", "group":"Турски","logo":""},
   "PPV Info":{"id":"PPV Info", "group":"Турски","logo":""},
-  
-  #Holland
-  # "RTL Z HD (NL)":{"id":"RTL Z HD (NL)", "group":"Холандски","logo":""},
+  "RTL Z HD (NL)":{"id":"RTL Z HD (NL)", "group":"Холандски","logo":""},
   "HBO NL":{"id":"HBO NL", "group":"Холандски","logo":"http://logos.kodibg.org/tvbg/hbo.png"},
   "HBO2 NL":{"id":"HBO2 NL", "group":"Холандски","logo":"http://logos.kodibg.org/tvbg/hbo2.png"},
   "HBO3 NL":{"id":"HBO3 NL", "group":"Холандски","logo":"http://logos.kodibg.org/tvbg/hbo3.png"},
@@ -713,9 +694,7 @@
   "Film1 Comedy Kids NL":{"id":"Film1 Comedy Kids NL", "group":"Холандски","logo":""},
   "Film1 Premiere NL":{"id":"Film1 Premiere NL", "group":"Холандски","logo":"https://wp13-images-nl-dynamic.horizon.tv/ChannelLogos/02/film1_premiere_1.png?w=75&h=108&mode=box"},
   "SBS 6 (NL)":{"id":"SBS 6 (NL)", "group":"Холандски","logo":"https://wp5-images-nl-dynamic.horizon.tv/ChannelLogos/02/sbs6_1.png"},
-
   "TuneBox HD":{"id":"360TuneBoxHD", "group":"Тематични","logo":"http://logos.kodibg.org/360tunebox.png"},
-  #LQ
   "БНТ1 LQ":{"id":"БНТ 1", "group":"Национални","logo":""},
   "bTV LQ":{"id":"bTV", "group":"Национални","logo":""},
   "Nova LQ":{"id":"Nova", "group":"Национални","logo":""},
@@ -759,8 +738,6 @@
   "Balkanika LQ":{"id":"Balkanika", "group":"Музикални","logo":""},
   "Фолклор LQ":{"id":"Фолклор", "group":"Музикални","logo":""},
   "Arirang":{"id":"Arirang", "group":"Музикални","logo":""},
-
-  ###Erotic  
   "Private":{"id":"Private", "group":"Възрастни","logo":""},
   "Sexto Senso":{"id":"Sexto Senso", "group":"Възрастни","logo":""},
   "SCT Exotica":{"id":"SCT Exotica", "group":"Възрастни","logo":""},
@@ -783,8 +760,6 @@
   "SCT Teleitalia":{"id":"SCT Teleitalia", "group":"Възрастни","logo":""},
   "SCT Boy & Boy":{"id":"SCT Boy & Boy", "group":"Възрастни","logo":""},
   "XXL HD":{"id":"XXL HD", "group":"Възрастни","logo":""},
-  
-  ##Serbian
   "Slovenija 2 TV":{"id":"Slovenija 2 TV", "group":"Тематични","logo":"http://tvprofil.net/img/kanali-logo/rtv-slo2-logo.png"},
   "Pink Plus":{"id":"Pink Plus", "group":"Сръбски","logo":"http://tvprofil.net/img/kanali-logo/PinkPlus.png"},
   "Pink 2":{"id":"Pink 2", "group":"Сръбски","logo":""},
@@ -834,8 +809,6 @@
   "Канал 5 MK":{"id":"Канал 5 MK", "group":"Сръбски","logo":""},
   "24 Вести MK":{"id":"24 Вести MK", "group":"Сръбски","logo":""},
   "Nova TV MK":{"id":"Nova TV MK", "group":"Сръбски","logo":""},
-  
-  ### Delayed
   "BNT1 +1":{"id":"BNT1 +1", "group":"Национални","logo":""},
   "BTV +1":{"id":"bTV +1", "group":"Национални","logo":""},
   "Nova +1":{"id":"Nova +1", "group":"Национални","logo":""},
@@ -866,7 +839,6 @@
   "BNT1 +48 LQ":{"id":"BNT1 +48 LQ", "group":"Национални","logo":""},
   "BTV +48 LQ":{"id":"BTV +48 LQ", "group":"Национални","logo":""},
   "Nova +48 LQ":{"id":"Nova +48 LQ", "group":"Национални","logo":""},
-  #Radios
   "Дарик радио":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/darik-radio-online-280x280.jpg"},
   "Radio Focus":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/radio-focus.jpg"},
   "Radio Nova":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/radio-nova-logo.jpg"},
@@ -884,5 +856,5 @@
   "FM+":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/fm-radio-logo-280x280.jpg"},
   "Magic FM":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/magic-fm-logo.jpg"},
   "tangramegarock":{"id":"", "group":"Радио","logo":"http://bgradios.com/images/radio-tangra-logo.jpg"},
-  "radio1rock":{"id":"", "group":"Радио","logo":"http://www.radio1rock.bg/themes/radio1rock/images/sharing/radio_default_banner.jpg"},
+  "radio1rock":{"id":"", "group":"Радио","logo":"http://www.radio1rock.bg/themes/radio1rock/images/sharing/radio_default_banner.jpg"}
 }

@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-import os, sys, gzip, urllib2, urlparse
+import os, sys, gzip, urllib2, urlparse, json
 
 ### Basic class to download assets on a give time interval
 ### If download fails, and the old file doesn't exist
@@ -17,11 +17,11 @@ class Assets:
     else:
       self.log = log
       self.url = url
-      self.url_path = urlparse.urlsplit(url).path)
-      self.url_md5 = urlparse.urljoin(self.url, '.md5')
+      self.url_path = urlparse.urlsplit(url).path
+      self.url_md5 = urlparse.urljoin(self.url_path, '.md5')
       self.file_name = os.path.basename(url)
       self.file = os.path.join(temp_dir, self.file_name)
-      slef.file_md5 = os.path.join(self.file, '.md5')
+      self.file_md5 = os.path.join(self.file, '.md5')
       self.backup_file = backup_file
       if os.path.isfile(self.file):
         self.first_run = False
@@ -30,24 +30,31 @@ class Assets:
     if self.file.endswith('gz'):
       self.extract()
 
+  def get_json(self):
+    try:
+      with open(self.file) as f:
+        return json.loads(f.read())
+    except:
+      self.log("Unable to load JSON content from file %s" % self.file)
+      self.handle_ex()
+      return {}
+      
   def get_md5(self):
-    val = 'default_md5_old'
     try: 
       with open(self.file_md5) as f:
-        val = f.read()
+        return f.read()
     except:
       self.log("Unable to read %s" % self.file_md5)
-    return val
+      return 'default_md5_old'
  
   def get_new_md5(self):
-    val = 'default_md5_new'
     try:
       self.log('Checking asset md5: %s' % self.url_md5)
       f = urllib2.urlopen(self.url)
-      val = f.read()
+      return f.read()
     except:
       log('Unable to read online md5 sum %s' % self.url_md5)
-    return val
+      return 'default_md5_new'
       
   def create_dir(self, dir):
     try: os.makedirs(dir)

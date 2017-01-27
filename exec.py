@@ -2,7 +2,7 @@
 import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs, json
 #from resources.mapping import *
 from resources.assets import *
-DEBUG = False
+DEBUG = True
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
@@ -240,8 +240,9 @@ def write_playlist():
           line = EXTINF % (id,group,logo,c_name)
           try :
             url = channels[c_name]
-            w.write(line)
-            w.write(url + "\n")
+            xbmc.log(line)
+            #w.write(line)
+            #w.write(url + "\n")
             del channels[c_name]
             n += 1
             if i % progress_step == 0:
@@ -304,10 +305,10 @@ if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
 log('order file: %s' % order_file)
 
-url = "https://raw.githubusercontent.com/harrygg/plugin.program.bgplaylist/master/resources/mapping.json.gz"
+url = "https://raw.githubusercontent.com/harrygg/plugin.program.bgplaylist/Assets/resources/mapping.json.gz"
 backup = os.path.join(cwd, 'resources', 'mapping.json')
 a = Assets(profile_dir, url, backup, xbmc.log)
-map = json.load(a.file)
+map = a.get_json()
 
 sorting = True
 EXTINF = '#EXTINF:-1 tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
