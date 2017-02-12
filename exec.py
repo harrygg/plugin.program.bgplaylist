@@ -141,9 +141,12 @@ def get_playlist_from_file(progress_max):
     log(er, xbmc.LOGERROR)
   return lines
 
-def get_channel_info_from_map(name, attr):
-  try: ret = channels_map[name][attr]
-  except: ret = ""
+def get_channel_info_from_map(name, attr, default = ""):
+  try: 
+    ret = channels_map[name][attr]
+    if ret == "": 
+      ret = default
+  except: ret = default
   return ret
   
 def parse_playlist(lines):
@@ -162,7 +165,7 @@ def parse_playlist(lines):
         exported_names += name + '\n'
         is_radio = "radio=\"True" in lines[i]
         if is_radio:
-          logo = get_channel_info_from_map(name,'logo')
+          logo = get_channel_info_from_map(name, 'logo')
           raw_radio_streams += '#EXTINF:-1 radio="True" group-title="Радио" tvg-logo="%s",%s\n' % (logo, name)
           raw_radio_streams += lines[i + 1] + '\n'
           i += 2
@@ -229,13 +232,12 @@ def write_playlist():
         w.write('#EXTM3U\n')
         for i in range(0, n_order):
           c_name = ordered_channels[i]
-          id = get_channel_info_from_map(c_name, 'id')
-          if id is "": id = c_name
-          group = get_channel_info_from_map(c_name, 'group')
+          id = get_channel_info_from_map(c_name, 'id', c_name)
+          group = get_channel_info_from_map(c_name, 'group', "Други")
           logo = get_channel_info_from_map(c_name, 'logo')
           #log("Добавяне на сортиран канал: %s. %s" % (n, c_name))
           
-          line = EXTINF % (id,group,logo,c_name)
+          line = EXTINF % (id, group, logo, c_name)
           try :
             url = channels[c_name]
             w.write(line)
@@ -256,14 +258,17 @@ def write_playlist():
         log('Останали несортирани канали в плейлистата: %s' % len(channels))
         if add_missing:
           log('Добавянето на несортираните канали е разрешено')
-          for c_name,url in channels.items():
-            id = get_channel_info_from_map(c_name, 'id')
-            if id is "": id = c_name
-            group = get_channel_info_from_map(c_name, 'group')
+          for c_name, url in channels.items():
+            if hide_lq_channels and "LQ" in c_name:
+              continue
+            id = get_channel_info_from_map(c_name, 'id', c_name)
             logo = get_channel_info_from_map(c_name, 'logo')
-            line = EXTINF % (id,group,logo,c_name)
-            w.write(line)
-            w.write(url + "\n")
+            group = get_channel_info_from_map(c_name, 'group', "Други")
+            if group.encode('utf-8') not in hidden_groups:
+              log(group)
+              line = EXTINF % (id, group, logo, c_name)
+              w.write(line)
+              w.write(url + "\n")
         
         ###################################################
         ### Add radio channels if such are found during the playlist parsing
@@ -289,6 +294,49 @@ profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8'
 cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
 c_debug = True if addon.getSetting('debug') == 'true' else False
 add_missing = True if addon.getSetting('add_missing') == 'true' else False
+
+### Get channels that must be hidden
+hide_lq_channels = True if addon.getSetting('hide_lq') == 'true' else False
+
+hidden_groups = []
+if addon.getSetting('hide_children') == 'true':
+  hidden_groups.append('Детски') 
+if addon.getSetting('hide_docs') == 'true':
+  hidden_groups.append('Документални') 
+if addon.getSetting('hide_french') == 'true':
+  hidden_groups.append('Френски') 
+if addon.getSetting('hide_english') == 'true':
+  hidden_groups.append('Английски') 
+if addon.getSetting('hide_german') == 'true':
+  hidden_groups.append('Немски') 
+if addon.getSetting('hide_holland') == 'true':
+  hidden_groups.append('Холандски') 
+if addon.getSetting('hide_italian') == 'true':
+  hidden_groups.append('Италиански') 
+if addon.getSetting('hide_movies') == 'true':
+  hidden_groups.append('Филми') 
+if addon.getSetting('hide_music') == 'true':
+  hidden_groups.append('Музикални') 
+if addon.getSetting('hide_news') == 'true':
+  hidden_groups.append('Новини') 
+if addon.getSetting('hide_russian') == 'true':
+  hidden_groups.append('Руски') 
+if addon.getSetting('hide_serbian') == 'true':
+  hidden_groups.append('Сръбски') 
+if addon.getSetting('hide_theme') == 'true':
+  hidden_groups.append('Тематични') 
+if addon.getSetting('hide_turkish') == 'true':
+  hidden_groups.append('Турски') 
+if addon.getSetting('hide_xxx') == 'true':
+  hidden_groups.append('Възрастни') 
+if addon.getSetting('hide_sports') == 'true':
+  hidden_groups.append('Спортни') 
+if addon.getSetting('hide_bulgarian') == 'true':
+  hidden_groups.append('Български') 
+if addon.getSetting('hide_others') == 'true':
+  hidden_groups.append('Други') 
+log("Hidden groups: %s " % hidden_groups)
+
 export_names = True if addon.getSetting('export_names') == 'true' else False
 if export_names:
   export_to_folder = addon.getSetting('export_to_folder')

@@ -15,6 +15,27 @@
     <category label="Подредба">
       <setting label="Път до шаблон с подредба на канали" type="file"  id="order_file" default="resources/order.txt" />
       <setting label="Добави каналите, които липсват в шаблона, но са в плейлистата" type="bool" id="add_missing" default="false"/>
+      <setting label="Скрий канали от следните категории:" type="lsep"/>
+      <setting label="С ниско качество (LQ)" type="bool" id="hide_lq" default="true"/>
+      <setting label="Категория Турски" type="bool" id="hide_turkish" default="false"/>
+      <setting label="Категория Руски" type="bool" id="hide_russian" default="false"/>
+      <setting label="Категория Сръбски" type="bool" id="hide_serbian" default="false"/>
+      <setting label="Категория Английски" type="bool" id="hide_english" default="false"/>
+      <setting label="Категория Немски" type="bool" id="hide_german" default="false"/>
+      <setting label="Категория Френски" type="bool" id="hide_french" default="false"/>
+      <setting label="Категория Холандски" type="bool" id="hide_holland" default="false"/>
+      <setting label="Категория Италиански" type="bool" id="hide_italian" default="false"/>
+      <setting label="Категория Новини" type="bool" id="hide_news" default="false"/>
+      <setting label="Категория Детски" type="bool" id="hide_children" default="false"/>
+      <setting label="Категория Тематични" type="bool" id="hide_theme" default="false"/>
+      <setting label="Категория Възрастни" type="bool" id="hide_xxx" default="false"/>
+      <setting label="Категория Филми" type="bool" id="hide_movies" default="false"/>
+      <setting label="Категория Музикални" type="bool" id="hide_music" default="false"/>
+      <setting label="Категория Документални" type="bool" id="hide_docs" default="false"/>
+      <setting label="Категория Спортни" type="bool" id="hide_sports" default="false"/>
+      <setting label="Категория Български" type="bool" id="hide_bulgarian" default="false"/>
+      <setting label="Категория Други" type="bool" id="hide_others" default="false"/>
+      <setting type="sep"/>
     </category>
     <category label="Други">
       <setting label="Рестартирай ПВР след ъпдейт" type="bool"   id="reload_pvr" default="true"/>
