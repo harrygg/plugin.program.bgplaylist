@@ -264,8 +264,7 @@ def write_playlist():
             id = get_channel_info_from_map(c_name, 'id', c_name)
             logo = get_channel_info_from_map(c_name, 'logo')
             group = get_channel_info_from_map(c_name, 'group', "Други")
-            if group.encode('utf-8') not in hidden_groups:
-              log(group)
+            if group not in hidden_groups:
               line = EXTINF % (id, group, logo, c_name)
               w.write(line)
               w.write(url + "\n")
@@ -334,8 +333,11 @@ if addon.getSetting('hide_sports') == 'true':
 if addon.getSetting('hide_bulgarian') == 'true':
   hidden_groups.append('Български') 
 if addon.getSetting('hide_others') == 'true':
-  hidden_groups.append('Други') 
-log("Hidden groups: %s " % hidden_groups)
+  hidden_groups.append('Други')
+
+log("Hidden groups:")
+for h in hidden_groups:
+  log(h)
 
 export_names = True if addon.getSetting('export_names') == 'true' else False
 if export_names:
@@ -348,7 +350,7 @@ if export_names:
 order_file = addon.getSetting('order_file')
 if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
-log('order file: %s' % order_file)
+log('Using order file: %s' % order_file)
 
 sorting = True
 EXTINF = '#EXTINF:-1 tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
