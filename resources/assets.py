@@ -1,35 +1,61 @@
 # -*- coding: utf8 -*-
-import os, sys, gzip, urllib2, urlparse, json
+import os, sys, gzip, urllib2, urlparse, json, tempfile
 
 ### Basic class to download assets on a give time interval
 ### If download fails, and the old file doesn't exist
 ### Use a local file
 
-class Assets:
-  interval = 24 #Hours Interval to check for new version of the asset
+class Asset:
+
+  interval = 24 # Hours Interval to check for new version of the asset
+  url = None # URL of the online resources
+  url_md5 = None # MD5 sum of the online resource
+  temp_dir = tempfile.gettempdir() # Directory where the file will be saved (downloaded and unzipped)
+  file_name = None # The file name of the asset
+  file = None # Path to the asset file 
+  file_md5 = None # MD5 sum of the file
+  backup_file = None # File that will be used in case the online asset is missing or couldn't be downloaded
+  log = print # Callback funciton handling the logging
+  first_run = False
   
-  def __init__(self, temp_dir, url, backup_file, log):
-    if os.path.isdir(temp_dir) is False:
-      self.create_dir(temp_dir)
-    self.temp_dir = temp_dir
-    if url == '':
+  def __init__(self, url, **kwargs):
+    """Create a new asset from an online file.
+    if the local file is older than the 'interval' compare the local file md5 with the online file md5
+    If md5 differs, download the file 
+    """
+    if url is '':
       raise ValueError("Valid asset url must be provided!")
-    else:
-      self.log = log
-      self.url = url
-      self.url_path = urlparse.urlsplit(url).path
-      self.url_md5 = urlparse.urljoin(self.url_path, '.md5')
-      self.file_name = os.path.basename(url)
-      self.file = os.path.join(temp_dir, self.file_name)
-      self.file_md5 = os.path.join(self.file, '.md5')
-      self.backup_file = backup_file
-      if os.path.isfile(self.file):
-        self.first_run = False
+    
+    if kwargs is not None:
+      self.log("**kwargs:")
+      for key, value in kwargs.iteritems():
+        self.log("%s: %s" % (key, value))
+        if key is 'temp_dir':
+          temp_dir = value
+        
+    if temp_dir not None:
+      if os.path.isdir(temp_dir) is False:
+        self.create_dir(temp_dir)
+    
+    self.temp_dir = temp_dir
+    self.url = url
+    self.url_path = urlparse.urlsplit(url).path
+    
+    if log_callback not None:
+      self.log = log_callback
+
+    self.url_md5 = urlparse.urljoin(self.url_path, '.md5')
+    self.file_name = os.path.basename(url)
+    self.file = os.path.join(temp_dir, self.file_name)
+    self.file_md5 = os.path.join(self.file, '.md5')
+    self.backup_file = backup_file
+    if os.path.isfile(self.file):
+      self.first_run = False
     if self.is_timer_expired():
       self.get_asset()
     if self.file.endswith('gz'):
-      self.extract()
-
+      self.extract()   
+    
   def get_json(self):
     try:
       with open(self.file) as f:
