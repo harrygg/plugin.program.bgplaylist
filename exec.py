@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs, json
 #from resources.mapping import *
-from resources.assets import *
-DEBUG = True
+from resources.asset import *
+DEBUG = False
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
@@ -240,7 +240,7 @@ def write_playlist():
           line = EXTINF % (id,group,logo,c_name)
           try :
             url = channels[c_name]
-            xbmc.log(line)
+            #xbmc.log(line)
             #w.write(line)
             #w.write(url + "\n")
             del channels[c_name]
@@ -288,8 +288,8 @@ def write_playlist():
 addon = xbmcaddon.Addon()
 id = addon.getAddonInfo('id')
 name = addon.getAddonInfo('name').decode('utf-8')
-profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
-cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
+profile_dir = xbmc.translatePath(addon.getAddonInfo('profile')).decode('utf-8')
+cwd = xbmc.translatePath(addon.getAddonInfo('path')).decode('utf-8')
 c_debug = True if addon.getSetting('debug') == 'true' else False
 add_missing = True if addon.getSetting('add_missing') == 'true' else False
 export_names = True if addon.getSetting('export_names') == 'true' else False
@@ -305,9 +305,13 @@ if not os.path.isfile(order_file):
   order_file = os.path.join(cwd, 'resources', 'order.txt')
 log('order file: %s' % order_file)
 
-url = "https://raw.githubusercontent.com/harrygg/plugin.program.bgplaylist/Assets/resources/mapping.json.gz"
-backup = os.path.join(cwd, 'resources', 'mapping.json')
-a = Assets(profile_dir, url, backup, xbmc.log)
+url = "http://localhost/tv/mapping.json.gz"
+
+a = Asset(url, 
+  temp_dir=profile_dir, 
+  backup_file=os.path.join(cwd, 'resources', 'mapping.json'), 
+  log_callback=xbmc.log
+  )
 map = a.get_json()
 
 sorting = True
