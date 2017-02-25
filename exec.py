@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
-import os, xbmc, xbmcaddon, xbmcgui, requests, re, xbmcvfs
+import os 
+import xbmc
+import xbmcaddon
+import xbmcgui
+import requests
+import re
+import xbmcvfs
+import json
 from resources.mapping import *
-DEBUG = False
+
+DEBUG = True
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
-    xbmc.log('%s | %s' % (id, msg), level)
+    xbmc.log('%s | %s' % (addon_id, msg), level)
   if level == xbmc.LOGERROR:
     import traceback
-    xbmc.log('%s | %s' % (id, traceback.format_exc()), xbmc.LOGERROR)
+    xbmc.log('%s | %s' % (addon_id, traceback.format_exc()), xbmc.LOGERROR)
 
 def notify_error(msg):
   log(msg, xbmc.LOGERROR)
@@ -16,7 +24,7 @@ def notify_error(msg):
   
 def show_progress(percent, msg):
   if c_debug or is_manual_run:
-    heading = name.encode('utf-8') + ' ' + str(percent) + '%'
+    heading = addon_name.encode('utf-8') + ' ' + str(percent) + '%'
     dp.update(percent, heading, str(msg))
     log(msg)
 
@@ -66,12 +74,12 @@ def get_playlist():
   global progress, source_m3u
   progress_max = 70
   progress += 1
-  show_progress(progress, 'Getting playlist from %s ' % m3u_file)
+  show_progress(progress, 'Използване на плейлиста от %s ' % m3u_file)
   if is_pl_remote:
     lines = get_playlist_from_url(progress_max)
   else:
     lines = get_playlist_from_file(progress_max)
-  log("get_playlist: %s lines" % len(lines))
+  log("get_playlist: съдържа %s реда" % len(lines))
   progress = progress_max
   source_m3u = ''.join(lines)
   return lines
@@ -166,7 +174,8 @@ def parse_playlist(lines):
         is_radio = "radio=\"True" in lines[i]
         if is_radio:
           logo = get_channel_info_from_map(name, 'logo')
-          raw_radio_streams += '#EXTINF:-1 radio="True" group-title="Радио" tvg-logo="%s",%s\n' % (logo, name)
+          #'#EXTINF:-1 radio="True" group-title="Радио" tvg-logo="%s",%s\n'
+          raw_radio_streams += EXTINF % (True, "", "Радио", logo, name)
           raw_radio_streams += lines[i + 1] + '\n'
           i += 2
         else:       
@@ -194,7 +203,7 @@ def update(action, location, crash=None):
   try:
     from ga import ga
     p = {}
-    p['an'] = addon.getAddonInfo('name')
+    p['an'] = addon_name
     p['av'] = addon.getAddonInfo('version')
     p['ec'] = 'Addon actions'
     p['ea'] = action
@@ -237,7 +246,7 @@ def write_playlist():
           logo = get_channel_info_from_map(c_name, 'logo')
           #log("Добавяне на сортиран канал: %s. %s" % (n, c_name))
           
-          line = EXTINF % (id, group, logo, c_name)
+          line = EXTINF % (False, id, group, logo, c_name)
           try :
             url = channels[c_name]
             w.write(line)
@@ -265,7 +274,7 @@ def write_playlist():
             logo = get_channel_info_from_map(c_name, 'logo')
             group = get_channel_info_from_map(c_name, 'group', "Други")
             if group not in hidden_groups:
-              line = EXTINF % (id, group, logo, c_name)
+              line = EXTINF % (False, id, group, logo, c_name)
               w.write(line)
               w.write(url + "\n")
         
@@ -283,148 +292,174 @@ def write_playlist():
   except Exception, er:
     log(er, xbmc.LOGERROR)
 
+def is_player_active():
+  try:
+    res = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.GetActivePlayers", "id":1}')
+    player_id = json.loads(res)["result"][0]["playerid"]
+    res = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.GetItem","params":{"properties":["channeltype","channelnumber"],"playerid":%s},"id":"id1"}' % player_id)
+    #log(res)
+    item_type = json.loads(res)["result"]["item"]["type"]
+    if item_type == "channel":
+      log("PVR is playing!")
+      return True
+  except:
+    pass
+  log("PVR is not playing!")
+  return False
+ 
 ###################################################
 ### Settings and variables 
 ###################################################
 addon = xbmcaddon.Addon()
-id = addon.getAddonInfo('id')
-name = addon.getAddonInfo('name').decode('utf-8')
-profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
-cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
+addon_id = addon.getAddonInfo('id')
+addon_name = addon.getAddonInfo('name').decode('utf-8')
+reload_pvr_if_playing = addon.getSetting('reload_pvr_if_playing') == 'true'
 c_debug = True if addon.getSetting('debug') == 'true' else False
+profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
 add_missing = True if addon.getSetting('add_missing') == 'true' else False
-
-### Get channels that must be hidden
 hide_lq_channels = True if addon.getSetting('hide_lq') == 'true' else False
-
 hidden_groups = []
-if addon.getSetting('hide_children') == 'true':
-  hidden_groups.append('Детски') 
-if addon.getSetting('hide_docs') == 'true':
-  hidden_groups.append('Документални') 
-if addon.getSetting('hide_french') == 'true':
-  hidden_groups.append('Френски') 
-if addon.getSetting('hide_english') == 'true':
-  hidden_groups.append('Английски') 
-if addon.getSetting('hide_german') == 'true':
-  hidden_groups.append('Немски') 
-if addon.getSetting('hide_holland') == 'true':
-  hidden_groups.append('Холандски') 
-if addon.getSetting('hide_italian') == 'true':
-  hidden_groups.append('Италиански') 
-if addon.getSetting('hide_movies') == 'true':
-  hidden_groups.append('Филми') 
-if addon.getSetting('hide_music') == 'true':
-  hidden_groups.append('Музикални') 
-if addon.getSetting('hide_news') == 'true':
-  hidden_groups.append('Новини') 
-if addon.getSetting('hide_russian') == 'true':
-  hidden_groups.append('Руски') 
-if addon.getSetting('hide_serbian') == 'true':
-  hidden_groups.append('Сръбски') 
-if addon.getSetting('hide_theme') == 'true':
-  hidden_groups.append('Тематични') 
-if addon.getSetting('hide_turkish') == 'true':
-  hidden_groups.append('Турски') 
-if addon.getSetting('hide_xxx') == 'true':
-  hidden_groups.append('Възрастни') 
-if addon.getSetting('hide_sports') == 'true':
-  hidden_groups.append('Спортни') 
-if addon.getSetting('hide_bulgarian') == 'true':
-  hidden_groups.append('Български') 
-if addon.getSetting('hide_others') == 'true':
-  hidden_groups.append('Други')
-
-log("Hidden groups:")
-for h in hidden_groups:
-  log(h)
-
-export_names = True if addon.getSetting('export_names') == 'true' else False
-if export_names:
-  export_to_folder = addon.getSetting('export_to_folder')
-  if os.path.isdir(export_to_folder):
-    names_file = os.path.join(export_to_folder, 'names.txt')
-  else:
-    names_file = os.path.join(profile_dir, 'names.txt')
-
-order_file = addon.getSetting('order_file')
-if not os.path.isfile(order_file):
-  order_file = os.path.join(cwd, 'resources', 'order.txt')
-log('Using order file: %s' % order_file)
-
 sorting = True
-EXTINF = '#EXTINF:-1 tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
-log('sorting: %s' % sorting)
+EXTINF = '#EXTINF:-1 radio="%s" tvg-id="%s" group-title="%s" tvg-logo="%s",%s\n'
 pl_name = 'bgpl.m3u'
 source_m3u = ''
 new_m3u = os.path.join(profile_dir, pl_name)
-log('Playlist path: %s' % new_m3u)
+log('new_m3u: %s' % new_m3u)
 progress = 0
 raw_radio_streams = ""
 
-if addon.getSetting('firstrun') == 'true':
-  addon.setSetting('firstrun', 'false')
-  addon.openSettings()
-  
-###################################################
-### If addon is run manually display progress dialog
-###################################################
-is_manual_run = False if len(sys.argv) > 1 and sys.argv[1] == 'False' else True
-if not is_manual_run:
-  log('Автоматично генериране на плейлиста')
-dp = False
-update('operation', 'regeneration')
-if is_manual_run or c_debug:
-  dp = xbmcgui.DialogProgressBG()
-  dp.create(heading = name)
+#########################################################################
+### Run addon only if PVR is not active or reload_pvr_if_playing is True
+#########################################################################
+if is_player_active() and reload_pvr_if_playing == False:
+  xbmc.log("PVR is in use. Delaying playlist regeneration with 5 minutes")
+  xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (addon_id, addon_id, 5))
+else:
 
-###################################################
-### Get playlist from source (server or file) and parse it (sort channels)
-###################################################
-try:
-  is_pl_remote = addon.getSetting('m3u_path_type') == '1'
-  m3u_file = addon.getSetting('m3u_url') if is_pl_remote else addon.getSetting('m3u_path')
-  log("source m3u file: " + m3u_file)
+  ### Get channel groups that will be hidden
+  if addon.getSetting('hide_children') == 'true':
+    hidden_groups.append('Детски') 
+  if addon.getSetting('hide_docs') == 'true':
+    hidden_groups.append('Документални') 
+  if addon.getSetting('hide_french') == 'true':
+    hidden_groups.append('Френски') 
+  if addon.getSetting('hide_english') == 'true':
+    hidden_groups.append('Английски') 
+  if addon.getSetting('hide_german') == 'true':
+    hidden_groups.append('Немски') 
+  if addon.getSetting('hide_holland') == 'true':
+    hidden_groups.append('Холандски') 
+  if addon.getSetting('hide_italian') == 'true':
+    hidden_groups.append('Италиански') 
+  if addon.getSetting('hide_movies') == 'true':
+    hidden_groups.append('Филми') 
+  if addon.getSetting('hide_music') == 'true':
+    hidden_groups.append('Музикални') 
+  if addon.getSetting('hide_news') == 'true':
+    hidden_groups.append('Новини') 
+  if addon.getSetting('hide_russian') == 'true':
+    hidden_groups.append('Руски') 
+  if addon.getSetting('hide_serbian') == 'true':
+    hidden_groups.append('Сръбски') 
+  if addon.getSetting('hide_theme') == 'true':
+    hidden_groups.append('Тематични') 
+  if addon.getSetting('hide_turkish') == 'true':
+    hidden_groups.append('Турски') 
+  if addon.getSetting('hide_xxx') == 'true':
+    hidden_groups.append('Възрастни') 
+  if addon.getSetting('hide_sports') == 'true':
+    hidden_groups.append('Спортни') 
+  if addon.getSetting('hide_bulgarian') == 'true':
+    hidden_groups.append('Български') 
+  if addon.getSetting('hide_others') == 'true':
+    hidden_groups.append('Други')
 
-  if m3u_file.strip() == '':
-    notify_error('Липсващ УРЛ за входяща плейлиста')
-  else:
-    lines = get_playlist()
-    channels = parse_playlist(lines)
-    if len(channels) == 0:
-      notify_error('Плейлистата не съдържа канали')
+  hg = "Следните групи канали ще бъдат скрити: "
+  for h in hidden_groups:
+    hg += "%s, " % h
+  log(hg)
+
+  ################################################
+  ### Export channel names from original playlist
+  ################################################
+  export_names = True if addon.getSetting('export_names') == 'true' else False
+  if export_names:
+    export_to_folder = addon.getSetting('export_to_folder')
+    if os.path.isdir(export_to_folder):
+      names_file = os.path.join(export_to_folder, 'names.txt')
     else:
-      write_playlist()
+      names_file = os.path.join(profile_dir, 'names.txt')
 
-      ###################################################
-      ### Copy playlist to additional folder if specified
-      ###################################################
-      try:
-        ctf = addon.getSetting('copy_to_folder')
-        if addon.getSetting('copy_playlist') == 'true' and os.path.isdir(ctf):
-          log('Copying playlist to: %s' % ctf)
-          xbmcvfs.copy(new_m3u, os.path.join(ctf, pl_name))
-          show_progress(98, 'Плейлиста беше успешно копирана')
-      except Exception, er:
-        log(er, xbmc.LOGERROR)
-        notify_error('Плейлистата НЕ беше копирана!')
+  order_file = addon.getSetting('order_file')
+  if not os.path.isfile(order_file):
+    cwd = xbmc.translatePath( addon.getAddonInfo('path') ).decode('utf-8')
+    order_file = os.path.join(cwd, 'resources', 'order.txt')
+  log('order_file: %s' % order_file)
 
-except Exception, er:
-  log(er, xbmc.LOGERROR)
+  if addon.getSetting('firstrun') == 'true':
+    addon.setSetting('firstrun', 'false')
+    addon.openSettings()
+  
+  #####################################################
+  ### If addon is run manually display progress dialog
+  #####################################################
+  is_manual_run = False if len(sys.argv) > 1 and sys.argv[1] == str(False) else True
+  if not is_manual_run:
+    log('Автоматично генериране на плейлиста')
+  dp = False
+  update('operation', 'regeneration')
+  if is_manual_run or c_debug:
+    dp = xbmcgui.DialogProgressBG()
+    dp.create(heading = addon_name)
 
-####################################################
-### Set next run
-####################################################
-roi = int(addon.getSetting('run_on_interval')) * 60
-show_progress(99,'Настройване на AlarmClock. Следващото изпълнение е след %s часа' % (roi / 60))
-xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (id, id, roi))
-      
-####################################################
-###Restart PVR Sertice to reload channels' streams
-####################################################
-if addon.getSetting('reload_pvr') == 'true':
-  xbmc.executebuiltin('XBMC.StopPVRManager')
-  xbmc.executebuiltin('XBMC.StartPVRManager')
+  ###################################################
+  ### Get playlist from source (server or file) and parse it (sort channels)
+  ###################################################
+  try:
+    is_pl_remote = addon.getSetting('m3u_path_type') == '1'
+    m3u_file = addon.getSetting('m3u_url') if is_pl_remote else addon.getSetting('m3u_path')
+    log("Път до оригинална m3u плейлиста: " + m3u_file)
 
-if dp:
-  dp.close()
+    if m3u_file.strip() == '':
+      notify_error('Липсващ УРЛ за входяща плейлиста')
+    else:
+      lines = get_playlist()
+      channels = parse_playlist(lines)
+      if len(channels) == 0:
+        notify_error('Плейлистата не съдържа канали')
+      else:
+        write_playlist()
+
+        ###################################################
+        ### Copy playlist to additional folder if specified
+        ###################################################
+        try:
+          ctf = addon.getSetting('copy_to_folder')
+          if addon.getSetting('copy_playlist') == 'true' and os.path.isdir(ctf):
+            log('Copying playlist to: %s' % ctf)
+            xbmcvfs.copy(new_m3u, os.path.join(ctf, pl_name))
+            show_progress(98, 'Плейлиста беше успешно копирана')
+        except Exception, er:
+          log(er, xbmc.LOGERROR)
+          notify_error('Плейлистата НЕ беше копирана!')
+
+  except Exception, er:
+    log(er, xbmc.LOGERROR)
+
+  ####################################################
+  ### Set next run
+  ####################################################
+  roi = int(addon.getSetting('run_on_interval')) * 60
+  show_progress(99,'Настройване на AlarmClock. Следващото изпълнение е след %s часа' % (roi / 60))
+  xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (addon_id, addon_id, roi))
+        
+
+  ####################################################
+  ###Restart PVR Sertice to reload channels' streams
+  ####################################################
+  if not is_player_active():
+    xbmc.executebuiltin('XBMC.StopPVRManager')
+    xbmc.executebuiltin('XBMC.StartPVRManager')
+
+  if dp:
+    dp.close()
