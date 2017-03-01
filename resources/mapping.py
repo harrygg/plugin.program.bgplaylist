@@ -322,7 +322,8 @@ channels_map = {
   "RAI Sport 1":{"id":"RAI Sport 1 HD", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_1.png"},
   "RAI Sport 1 HD":{"id":"RAI Sport 1 HD", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_1.png"},
   "RAI Sport 2":{"id":"RAI Sport 2", "group":"Спортни","logo":"http://varzeshitv.ir/ax/logo/Rai_Sport_2.png"},   
-  "TRT Spor HD":{"id":"TRT Spor HD", "group":"Спортни","logo":""},   
+  "TRT Spor HD":{"id":"TRT Spor", "group":"Спортни","logo":""},
+  "TRT Spor":{"id":"TRT Spor", "group":"Спортни","logo":""}, 
   
   ### English
   "Sky 1":{"id":"Sky 1", "group":"Английски","logo":"https://upload.wikimedia.org/wikipedia/en/thumb/9/91/Sky1_logo_2011.svg/640px-Sky1_logo_2011.svg.png"},
