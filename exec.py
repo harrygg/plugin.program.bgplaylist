@@ -132,7 +132,7 @@ def file_iter_lines(f, chunk_size=1024):
   if pending:
     yield(pending)
 
-        
+
 def get_playlist_from_file(progress_max):
   lines = []
   try:
