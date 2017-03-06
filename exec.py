@@ -7,9 +7,10 @@ import requests
 import re
 import xbmcvfs
 import json
+import sqlite3
 from resources.mapping import *
 
-DEBUG = True
+DEBUG = False
 
 def log(msg, level = xbmc.LOGNOTICE):
   if c_debug or level == xbmc.LOGERROR:
@@ -306,16 +307,57 @@ def is_player_active():
     pass
   log("PVR is not playing!")
   return False
- 
+
+def delete_tvdb():
+  db_file = os.path.join(db_dir, "TV29.db")
+  if os.path.isfile(db_file):
+    log("Trying to manually reset TV DB before restart %s" % db_file)
+    conn = sqlite3.connect(db_file)
+    with conn:
+      cursor = conn.cursor()
+      conn.execute('''DELETE FROM channels;''')
+      log('''Executing query: "DELETE FROM channels;"''')
+      conn.execute('''DELETE FROM map_channelgroups_channels;''')
+      log('''Executing query: "DELETE FROM map_channelgroups_channels;"''')
+      conn.execute('''DELETE FROM channelgroups;''')
+      log('''Executing query: "DELETE FROM channelgroups;"''')
+      conn.execute('''VACUUM;''')
+      log('''Executing query: "VACUUM;"''')
+      conn.commit()
+  else:
+    log("DB file does nto exist! %s" % db_file)
+    
+
+def delete_epgdb():
+  db_file = os.path.join(db_dir, "Epg11.db")
+  if os.path.isfile(db_file):
+    log("Trying to reset EPG DB before restart %s" % db_file)
+    conn = sqlite3.connect(db_file)
+    with conn:
+      cursor = conn.cursor()
+      conn.execute('''DELETE FROM epg;''')
+      log('''Executing query: "DELETE FROM epg;"''')
+      conn.execute('''DELETE FROM epgtags;''')
+      log('''Executing query: "DELETE FROM epgtags;"''')
+      conn.execute('''DELETE FROM lastepgscan;''')
+      log('''Executing query: "DELETE FROM lastepgscan;"''')
+      conn.execute('''VACUUM;''')
+      log('''Executing query: "VACUUM;"''')
+      conn.commit()
+  else:
+    log("DB file not found! %s" % db_file)
+
 ###################################################
 ### Settings and variables 
 ###################################################
 addon = xbmcaddon.Addon()
 addon_id = addon.getAddonInfo('id')
 addon_name = addon.getAddonInfo('name').decode('utf-8')
-reload_pvr_if_playing = addon.getSetting('reload_pvr_if_playing') == 'true'
+clean_tvdb = addon.getSetting('clean_tvdb') == 'true'
+clean_epgdb = addon.getSetting('clean_epgdb') == 'true'
 c_debug = True if addon.getSetting('debug') == 'true' else False
 profile_dir = xbmc.translatePath( addon.getAddonInfo('profile') ).decode('utf-8')
+db_dir = os.path.join(profile_dir, "../../Database/").decode('utf-8')
 add_missing = True if addon.getSetting('add_missing') == 'true' else False
 hide_lq_channels = True if addon.getSetting('hide_lq') == 'true' else False
 hidden_groups = []
@@ -328,14 +370,13 @@ log('new_m3u: %s' % new_m3u)
 progress = 0
 raw_radio_streams = ""
 
-#########################################################################
-### Run addon only if PVR is not active or reload_pvr_if_playing is True
-#########################################################################
-if is_player_active() and reload_pvr_if_playing == False:
+########################################
+### Run addon only if PVR is not active
+########################################
+if is_player_active():
   xbmc.log("PVR is in use. Delaying playlist regeneration with 5 minutes")
   xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (addon_id, addon_id, 5))
 else:
-
   ### Get channel groups that will be hidden
   if addon.getSetting('hide_children') == 'true':
     hidden_groups.append('Детски') 
@@ -452,14 +493,25 @@ else:
   roi = int(addon.getSetting('run_on_interval')) * 60
   show_progress(99,'Настройване на AlarmClock. Следващото изпълнение е след %s часа' % (roi / 60))
   xbmc.executebuiltin('AlarmClock(%s, RunScript(%s, False), %s, silent)' % (addon_id, addon_id, roi))
-        
-
+  
   ####################################################
-  ###Restart PVR Sertice to reload channels' streams
+  ###Restart PVR Service to reload channels' streams
   ####################################################
   if not is_player_active():
     xbmc.executebuiltin('XBMC.StopPVRManager')
+    xbmc.sleep(1000)
+    if clean_tvdb:
+      delete_tvdb()
+      xbmc.sleep(1000)
+    if clean_epgdb:
+      delete_epgdb()
+      xbmc.sleep(1000)
     xbmc.executebuiltin('XBMC.StartPVRManager')
+    #cursor2 = conn.execute('''SELECT sChannelName FROM channels WHERE iUniqueId = 9664925;''')
+    #for row in cursor2:
+    #  xbmc.log("curors %s" % row[0])
+
+    #xbmc.sleep(1000)
 
   if dp:
     dp.close()
