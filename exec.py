@@ -295,18 +295,9 @@ def write_playlist():
 
 def is_player_active():
   try:
-    res = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.GetActivePlayers", "id":1}')
-    player_id = json.loads(res)["result"][0]["playerid"]
-    res = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Player.GetItem","params":{"properties":["channeltype","channelnumber"],"playerid":%s},"id":"id1"}' % player_id)
-    #log(res)
-    item_type = json.loads(res)["result"]["item"]["type"]
-    if item_type == "channel":
-      log("PVR is playing!")
-      return True
+    return xbmc.getCondVisibility("Pvr.IsPlayingTv") or xbmc.getCondVisibility("Pvr.IsPlayingRadio")
   except:
-    pass
-  log("PVR is not playing!")
-  return False
+    return False
 
 def delete_tvdb():
   db_file = os.path.join(db_dir, "TV29.db")
