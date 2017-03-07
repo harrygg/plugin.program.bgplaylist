@@ -317,7 +317,6 @@ def delete_tvdb():
       conn.commit()
   else:
     log("DB file does nto exist! %s" % db_file)
-    
 
 def delete_epgdb():
   db_file = os.path.join(db_dir, "Epg11.db")
