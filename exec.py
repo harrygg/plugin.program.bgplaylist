@@ -299,43 +299,44 @@ def is_player_active():
   except:
     return False
 
+
 def delete_tvdb():
-  db_file = os.path.join(db_dir, "TV29.db")
-  if os.path.isfile(db_file):
-    log("Trying to manually reset TV DB before restart %s" % db_file)
-    conn = sqlite3.connect(db_file)
-    with conn:
-      cursor = conn.cursor()
-      conn.execute('''DELETE FROM channels;''')
-      log('''Executing query: "DELETE FROM channels;"''')
-      conn.execute('''DELETE FROM map_channelgroups_channels;''')
-      log('''Executing query: "DELETE FROM map_channelgroups_channels;"''')
-      conn.execute('''DELETE FROM channelgroups;''')
-      log('''Executing query: "DELETE FROM channelgroups;"''')
-      conn.execute('''VACUUM;''')
-      log('''Executing query: "VACUUM;"''')
-      conn.commit()
-  else:
-    log("DB file does nto exist! %s" % db_file)
+  try:
+    db_file = os.path.join(db_dir, "TV29.db")
+    if os.path.isfile(db_file):
+      xbmc.log("Trying to manually reset TV DB before restart %s" % db_file)
+      conn = sqlite3.connect(db_file)
+      with conn:
+        xbmc.log('''Executing cleanup queries for tables: channels, map_channelgroups_channels and channelgroups"''')
+        cursor = conn.cursor()
+        conn.execute('''DELETE FROM channels;''')
+        conn.execute('''DELETE FROM map_channelgroups_channels;''')
+        conn.execute('''DELETE FROM channelgroups;''')
+        conn.execute('''VACUUM;''')
+        conn.commit()
+    else:
+      xbmc.log("DB file does nto exist! %s" % db_file)
+  except:
+    xbmc.log("TV database was not reset before reloading")
 
 def delete_epgdb():
-  db_file = os.path.join(db_dir, "Epg11.db")
-  if os.path.isfile(db_file):
-    log("Trying to reset EPG DB before restart %s" % db_file)
-    conn = sqlite3.connect(db_file)
-    with conn:
-      cursor = conn.cursor()
-      conn.execute('''DELETE FROM epg;''')
-      log('''Executing query: "DELETE FROM epg;"''')
-      conn.execute('''DELETE FROM epgtags;''')
-      log('''Executing query: "DELETE FROM epgtags;"''')
-      conn.execute('''DELETE FROM lastepgscan;''')
-      log('''Executing query: "DELETE FROM lastepgscan;"''')
-      conn.execute('''VACUUM;''')
-      log('''Executing query: "VACUUM;"''')
-      conn.commit()
-  else:
-    log("DB file not found! %s" % db_file)
+  try:
+    db_file = os.path.join(db_dir, "Epg11.db")
+    if os.path.isfile(db_file):
+      xbmc.log("Trying to reset EPG DB before restart %s" % db_file)
+      conn = sqlite3.connect(db_file)
+      with conn:
+        xbmc.log('''Executing cleanup queries for tables: epg, epgtags and lastepgscan"''')
+        cursor = conn.cursor()
+        conn.execute('''DELETE FROM epg;''')
+        conn.execute('''DELETE FROM epgtags;''')
+        conn.execute('''DELETE FROM lastepgscan;''')
+        conn.execute('''VACUUM;''')
+        conn.commit()
+    else:
+      xbmc.log("DB file not found! %s" % db_file)
+  except:
+    xbmc.log("EPG database was not reset before reloading")
 
 ###################################################
 ### Settings and variables 
